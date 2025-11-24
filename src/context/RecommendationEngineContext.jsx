@@ -78,7 +78,7 @@ function generateReasoning(track, userProfile, score) {
   return reasons.slice(0, 3);  // Max 3 reasons
 }
 
-function generatePlaylist(context, tracks, userProfile, feedbackTimeline = [], limit = 12) {
+function generatePlaylist(context, tracks, userProfile, feedbackTimeline = [], limit = 20) {
   // Get IDs of skipped tracks from the timeline
   const skippedTrackIds = new Set(
     feedbackTimeline
@@ -208,6 +208,23 @@ export function RecommendationEngineProvider({ children }) {
       };
     });
     
+    // Fix: Preserve current playing track position if rankings shifted
+    if (currentPlaylistId) {
+      const currentPlaylist = playlists.find(p => p.id === currentPlaylistId);
+      const currentTrack = currentPlaylist?.tracks[currentTrackIndex];
+      
+      if (currentTrack) {
+        const newCurrentPlaylist = newPlaylists.find(p => p.id === currentPlaylistId);
+        if (newCurrentPlaylist) {
+          const newIndex = newCurrentPlaylist.tracks.findIndex(t => t.id === currentTrack.id);
+          if (newIndex !== -1 && newIndex !== currentTrackIndex) {
+            // Update index to match where the song moved to
+            setCurrentTrackIndex(newIndex);
+          }
+        }
+      }
+    }
+    
     setPlaylists(newPlaylists);
   };
 
@@ -284,6 +301,20 @@ export function RecommendationEngineProvider({ children }) {
   const likeSong = (trackId, context = null) => {
     setConsecutiveSkips(0);
     
+    // Auto-tune: Slightly boost genres of liked track
+    const track = tracksData.find(t => t.id === trackId);
+    if (track) {
+      setUserProfile(prev => {
+        const newWeights = { ...prev.genreWeights };
+        track.genres.forEach(g => {
+          if (newWeights[g] !== undefined) {
+            newWeights[g] = Math.min(newWeights[g] + 0.05, 1);
+          }
+        });
+        return { ...prev, genreWeights: newWeights };
+      });
+    }
+
     logFeedback({
       type: "like",
       trackId,
@@ -312,6 +343,20 @@ export function RecommendationEngineProvider({ children }) {
   const dislikeSong = (trackId) => {
     setConsecutiveSkips(0); // Reset skips because this is an explicit action
     
+    // Auto-tune: Slightly reduce genres of disliked track
+    const track = tracksData.find(t => t.id === trackId);
+    if (track) {
+      setUserProfile(prev => {
+        const newWeights = { ...prev.genreWeights };
+        track.genres.forEach(g => {
+          if (newWeights[g] !== undefined) {
+            newWeights[g] = Math.max(newWeights[g] - 0.05, 0);
+          }
+        });
+        return { ...prev, genreWeights: newWeights };
+      });
+    }
+
     logFeedback({
       type: "dislike",
       trackId,
@@ -355,6 +400,20 @@ export function RecommendationEngineProvider({ children }) {
     setCurrentTrackIndex(0);
   };
 
+  const playPreviousSong = () => {
+    setCurrentTrackIndex(prev => Math.max(0, prev - 1));
+  };
+
+  const playTrackAtIndex = (index) => {
+    const currentPlaylist = playlists.find(p => p.id === currentPlaylistId);
+    
+    if (currentPlaylist && index >= 0 && index < currentPlaylist.tracks.length) {
+      setCurrentTrackIndex(index);
+    } else {
+      console.error('playTrackAtIndex: Invalid index or playlist missing', { index, playlistId: currentPlaylistId, hasPlaylist: !!currentPlaylist, trackCount: currentPlaylist?.tracks?.length });
+    }
+  };
+
   const value = {
     userProfile,
     playlists,
@@ -375,6 +434,8 @@ export function RecommendationEngineProvider({ children }) {
     undoFeedbackEvent,
     resetAlgorithm,
     playPlaylist,
+    playPreviousSong,
+    playTrackAtIndex,
     regeneratePlaylists,
     logFeedback,
     setConsecutiveSkips

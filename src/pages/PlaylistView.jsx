@@ -3,12 +3,25 @@ import { useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useRecommendationEngine } from '../context/RecommendationEngineContext';
 import NowPlaying from '../components/NowPlaying';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function PlaylistView() {
   const { id } = useParams();
-  const { playlists, playPlaylist } = useRecommendationEngine();
+  const { playlists, playPlaylist, isLoadingPreviews } = useRecommendationEngine();
+  
+  // Auto-play playlist on mount - MUST be before any conditional returns
+  useEffect(() => {
+    if (id) {
+      playPlaylist(id);
+    }
+  }, [id]); // Remove playPlaylist from deps to prevent infinite loop
   
   const playlist = playlists.find(p => p.id === id);
+
+  // Show loading spinner while data is being fetched
+  if (isLoadingPreviews || playlists.length === 0) {
+    return <LoadingSpinner message="Loading your playlist..." />;
+  }
 
   if (!playlist) {
     return (
@@ -21,11 +34,6 @@ export default function PlaylistView() {
       </div>
     );
   }
-
-  // Auto-play playlist on mount
-  useEffect(() => {
-    playPlaylist(id);
-  }, [id, playPlaylist]);
 
   return (
     <div className="max-w-4xl mx-auto p-6">

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Play, Pause, SkipForward, SkipBack, Heart, X, ThumbsDown, Info, ExternalLink } from 'lucide-react';
+import { Play, Pause, SkipForward, SkipBack, Heart, X, ThumbsDown, Info, Shuffle, ChevronUp, ListMusic } from 'lucide-react';
 import { useRecommendationEngine } from '../context/RecommendationEngineContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -11,23 +11,95 @@ function formatTime(seconds) {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
-function ConfidenceBadge({ confidence, onClick }) {
-  const getColor = () => {
-    if (confidence >= 0.7) return 'bg-green-500/20 text-green-300 border-green-500/30';
-    if (confidence >= 0.4) return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
-    return 'bg-red-500/20 text-red-300 border-red-500/30';
-  };
-
+function ReasoningPill({ confidence, onClick }) {
   return (
     <motion.button
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`absolute top-6 right-6 px-4 py-2 rounded-full border backdrop-blur-md font-medium text-sm ${getColor()} flex items-center gap-2 shadow-lg z-10`}
+      className="w-full max-w-md bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-3 flex items-center justify-between group transition-colors"
     >
-      <div className={`w-2 h-2 rounded-full ${confidence >= 0.7 ? 'bg-green-400' : confidence >= 0.4 ? 'bg-yellow-400' : 'bg-red-400'} animate-pulse`} />
-      {Math.round(confidence * 100)}% Match
+      <div className="flex items-center gap-3">
+        <div className={`w-2 h-2 rounded-full ${confidence >= 0.7 ? 'bg-green-400' : confidence >= 0.4 ? 'bg-yellow-400' : 'bg-red-400'} animate-pulse`} />
+        <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
+          Playing because: <span className="font-bold text-white">{Math.round(confidence * 100)}% Match</span>
+        </span>
+      </div>
+      <Info className="w-4 h-4 text-gray-500 group-hover:text-gray-300" />
     </motion.button>
+  );
+}
+
+function QueueDrawer({ isOpen, onClose, playlist, currentIndex, onPlayTrack }) {
+  
+  // Safely get tracks and map them with their original indices
+  const allTracks = playlist?.tracks || [];
+  const upcomingTracks = allTracks
+    .map((t, i) => ({ ...t, originalIndex: i }))
+    .slice(currentIndex + 1, currentIndex + 6);
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm z-20 rounded-3xl"
+          />
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="absolute inset-x-0 bottom-0 bg-gray-900 border-t border-white/10 rounded-t-3xl p-6 z-30 max-h-[70%] overflow-y-auto"
+          >
+            <div className="w-12 h-1 bg-gray-700 rounded-full mx-auto mb-6" />
+            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <ListMusic className="w-5 h-5 text-purple-400" />
+              Up Next
+            </h3>
+            
+            <div className="space-y-2">
+              {upcomingTracks.length > 0 ? (
+                upcomingTracks.map((track, i) => (
+                  <button 
+                    key={track.id} 
+                    onClick={() => {
+                      if (typeof onPlayTrack === 'function') {
+                        onPlayTrack(track.originalIndex);
+                        onClose();
+                      } else {
+                        console.error('onPlayTrack is not a function!', onPlayTrack);
+                      }
+                    }}
+                    className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 w-full text-left hover:bg-white/10 transition-colors"
+                  >
+                    <span className="text-gray-500 w-4 text-center text-sm">{i + 1}</span>
+                    <div className="w-10 h-10 rounded-lg bg-gray-800 overflow-hidden shrink-0">
+                      {track.artworkUrl100 && <img src={track.artworkUrl100} alt="" className="w-full h-full object-cover" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{track.title}</p>
+                      <p className="text-xs text-gray-400 truncate">{track.artist}</p>
+                    </div>
+                    <div className={`text-xs font-bold px-2 py-1 rounded-full ${
+                      track.confidence >= 0.7 ? 'bg-green-500/20 text-green-300' : 'bg-yellow-500/20 text-yellow-300'
+                    }`}>
+                      {Math.round(track.confidence * 100)}%
+                    </div>
+                  </button>
+                ))
+              ) : (
+                <p className="text-gray-500 text-center py-8">End of playlist</p>
+              )}
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -158,16 +230,30 @@ function ContextModal({ track, isOpen, onClose, onSubmit }) {
 }
 
 export default function NowPlaying() {
-  const { playlists, currentPlaylistId, currentTrackIndex, likeSong, dislikeSong, skipSong, isLoadingPreviews } = useRecommendationEngine();
+  const { playlists, currentPlaylistId, currentTrackIndex, likeSong, dislikeSong, skipSong, setExplorationLevel, playPreviousSong, playTrackAtIndex, userProfile } = useRecommendationEngine();
   const [isPlaying, setIsPlaying] = useState(false);
   const [showReasoning, setShowReasoning] = useState(false);
   const [showContextModal, setShowContextModal] = useState(false);
+  const [isQueueOpen, setIsQueueOpen] = useState(false);
+  const [smartShuffle, setSmartShuffle] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const audioRef = useRef(null);
 
   const currentPlaylist = playlists.find(p => p.id === currentPlaylistId);
   const currentTrack = currentPlaylist?.tracks[currentTrackIndex];
+
+  // Toggle Smart Shuffle
+  const toggleSmartShuffle = () => {
+    const newState = !smartShuffle;
+    setSmartShuffle(newState);
+    // If turning on, set exploration to high (0.8). If off, reset to neutral (0.5)
+    setExplorationLevel(newState ? 0.8 : 0.5);
+    toast(newState ? "Smart Shuffle On" : "Smart Shuffle Off", {
+      description: newState ? "Finding new discoveries for you" : "Back to your regular mix",
+      icon: <Shuffle className={`w-4 h-4 ${newState ? 'text-green-400' : 'text-gray-400'}`} />
+    });
+  };
 
   // Audio logic
   useEffect(() => {
@@ -177,7 +263,21 @@ export default function NowPlaying() {
     // Set new track
     audio.src = currentTrack.previewUrl;
     audio.load();
-    setIsPlaying(false);
+    
+    // Auto-play on track change
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => setIsPlaying(true))
+        .catch(() => {
+          // Auto-play prevented by browser - this is expected behavior
+          // User can manually click play button
+          setIsPlaying(false);
+        });
+    } else {
+      setIsPlaying(true);
+    }
+    
     setCurrentTime(0);
     setDuration(0);
 
@@ -258,15 +358,11 @@ export default function NowPlaying() {
       {/* Ambient Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 to-black opacity-50" />
       
-      <div className="relative p-8 md:p-12 flex flex-col items-center">
-        <ConfidenceBadge 
-          confidence={currentTrack.confidence} 
-          onClick={() => setShowReasoning(true)}
-        />
-
+      <div className="relative p-5 md:p-6 flex flex-col items-center">
+        
         {/* Album Art */}
         <motion.div 
-          className="w-64 h-64 md:w-80 md:h-80 bg-gradient-to-br from-gray-800 to-black rounded-2xl shadow-2xl mb-8 flex items-center justify-center relative group overflow-hidden"
+          className="w-40 h-40 md:w-56 md:h-56 bg-gradient-to-br from-gray-800 to-black rounded-2xl shadow-2xl mb-4 flex items-center justify-center relative group overflow-hidden"
           whileHover={{ scale: 1.02 }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
         >
@@ -288,12 +384,12 @@ export default function NowPlaying() {
         </motion.div>
 
         {/* Track Info */}
-        <div className="text-center mb-8 space-y-2">
+        <div className="text-center mb-3 space-y-1">
           <motion.h2 
             key={currentTrack.title}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400"
+            className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400 truncate max-w-md"
           >
             {currentTrack.title}
           </motion.h2>
@@ -301,85 +397,90 @@ export default function NowPlaying() {
             key={currentTrack.artist}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-lg text-gray-400 font-medium"
+            className="text-sm text-gray-400 font-medium truncate max-w-md"
           >
             {currentTrack.artist} • {currentTrack.album}
           </motion.p>
         </div>
 
-        {/* Progress Bar */}
-        <div className="w-full max-w-md mb-3">
-          <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-            <motion.div 
-              className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"
-              style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
-              transition={{ type: "spring", stiffness: 100, damping: 20 }}
-            />
-          </div>
-          <div className="flex justify-between text-xs text-gray-500 mt-2 px-1">
-            <span>{formatTime(currentTime)}</span>
-            <span>{duration ? formatTime(duration) : currentTrack.previewUrl ? "Loading..." : "No preview"}</span>
-          </div>
-        </div>
-
-        {/* iTunes Link */}
-        {currentTrack.trackViewUrl && (
-          <a 
-            href={currentTrack.trackViewUrl} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-xs text-gray-500 hover:text-gray-400 flex items-center gap-1 mb-8 transition-colors"
-          >
-            View on iTunes <ExternalLink className="w-3 h-3" />
-          </a>
-        )}
-
         {/* Playback Controls */}
-        <div className="flex items-center gap-8 mb-10">
-          <motion.button whileTap={{ scale: 0.9 }} className="p-4 text-gray-400 hover:text-white transition-colors">
-            <SkipBack className="w-8 h-8" />
+        <div className="flex items-center gap-5 mb-4">
+          <motion.button 
+            whileTap={{ scale: 0.9 }} 
+            className={`p-2 rounded-full transition-colors ${smartShuffle ? 'text-green-400 bg-green-400/10' : 'text-gray-400 hover:text-white'}`}
+            onClick={toggleSmartShuffle}
+          >
+            <Shuffle className="w-4 h-4" />
+          </motion.button>
+
+          <motion.button 
+            whileTap={{ scale: 0.9 }} 
+            onClick={playPreviousSong}
+            className="p-2 text-gray-400 hover:text-white transition-colors"
+          >
+            <SkipBack className="w-6 h-6" />
           </motion.button>
           
           <motion.button 
             whileTap={{ scale: 0.9 }}
             onClick={togglePlayPause}
             disabled={!currentTrack.previewUrl}
-            className={`p-6 bg-white text-black rounded-full hover:scale-105 transition-all shadow-lg shadow-white/10 ${!currentTrack.previewUrl ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`p-3 bg-white text-black rounded-full hover:scale-105 transition-all shadow-lg shadow-white/10 ${!currentTrack.previewUrl ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            {isPlaying ? <Pause className="w-8 h-8 fill-current" /> : <Play className="w-8 h-8 fill-current" />}
+            {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current" />}
           </motion.button>
           
           <motion.button 
             whileTap={{ scale: 0.9 }}
             onClick={handleSkip}
-            className="p-4 text-gray-400 hover:text-white transition-colors"
+            className="p-2 text-gray-400 hover:text-white transition-colors"
           >
-            <SkipForward className="w-8 h-8" />
-          </motion.button>
-        </div>
-
-        {/* Feedback Controls */}
-        <div className="flex items-center gap-4">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleDislike}
-            className="px-8 py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all flex items-center gap-3 font-semibold text-gray-300 group"
-          >
-            <ThumbsDown className="w-5 h-5 group-hover:text-red-400 transition-colors" />
-            <span>Less Like This</span>
+            <SkipForward className="w-6 h-6" />
           </motion.button>
 
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <motion.button 
+            whileTap={{ scale: 0.9 }} 
             onClick={handleLike}
-            className="px-8 py-4 rounded-2xl bg-white text-black hover:bg-gray-200 transition-all flex items-center gap-3 font-bold shadow-lg shadow-white/5"
+            className="p-2 text-gray-400 hover:text-red-400 transition-colors"
           >
-            <Heart className="w-5 h-5 fill-current" />
-            <span>I Like This</span>
+            <Heart className="w-4 h-4" />
           </motion.button>
         </div>
+
+        {/* Reasoning Pill */}
+        <div className="mb-4 w-full flex justify-center">
+          <ReasoningPill 
+            confidence={currentTrack.confidence}
+            onClick={() => setShowReasoning(true)}
+          />
+        </div>
+
+        {/* Progress Bar */}
+        <div className="w-full max-w-md mb-4">
+          <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+            <motion.div 
+              className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"
+              style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+              transition={{ type: "spring", stiffness: 100, damping: 20 }}
+            />
+          </div>
+          <div className="flex justify-between text-[10px] text-gray-500 mt-1.5 px-1">
+            <span>{formatTime(currentTime)}</span>
+            <span>{duration ? formatTime(duration) : currentTrack.previewUrl ? "Loading..." : "No preview"}</span>
+          </div>
+        </div>
+
+        {/* Queue Toggle */}
+        <motion.button
+          onClick={() => setIsQueueOpen(true)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors flex items-center gap-2 text-[10px] font-medium text-gray-300"
+        >
+          <ListMusic className="w-3 h-3" />
+          Up Next
+          <ChevronUp className="w-3 h-3 ml-1" />
+        </motion.button>
 
         {/* Modals */}
         <ReasoningPanel 
@@ -393,6 +494,14 @@ export default function NowPlaying() {
           isOpen={showContextModal}
           onClose={() => setShowContextModal(false)}
           onSubmit={handleContextSubmit}
+        />
+
+        <QueueDrawer 
+          isOpen={isQueueOpen}
+          onClose={() => setIsQueueOpen(false)}
+          playlist={currentPlaylist}
+          currentIndex={currentTrackIndex}
+          onPlayTrack={playTrackAtIndex}
         />
 
         {/* Hidden Audio Element */}
