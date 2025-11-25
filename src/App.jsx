@@ -1,11 +1,53 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { RecommendationEngineProvider, useRecommendationEngine } from './context/RecommendationEngineContext';
-import { Toaster } from 'sonner';
 import HomePage from './pages/HomePage';
 import PlaylistView from './pages/PlaylistView';
-import TuningView from './pages/TuningView';
 import SkipFeedbackDialog from './components/SkipFeedbackDialog';
+import ActivitySelectorModal from './components/ActivitySelectorModal';
+import TuningDeckModal from './components/TuningDeckModal';
+import PhoneFrame from './components/PhoneFrame';
 import { AnimatePresence } from 'framer-motion';
+
+function ActivityModalManager() {
+  const { userProfile, setActivity, setMoods, isActivityModalOpen, setIsActivityModalOpen } = useRecommendationEngine();
+  
+  const handleApplyContext = (activity, moods) => {
+    setActivity(activity);
+    setMoods(moods);
+  };
+
+  return (
+    <ActivitySelectorModal 
+      isOpen={isActivityModalOpen}
+      onClose={() => setIsActivityModalOpen(false)}
+      currentActivity={userProfile.currentActivity}
+      currentMoods={userProfile.currentMoods}
+      onApply={handleApplyContext}
+    />
+  );
+}
+
+function TuningModalManager() {
+  const { 
+    userProfile, 
+    updateGenreWeights, 
+    setExplorationLevel, 
+    resetAlgorithm,
+    isTuningModalOpen, 
+    setIsTuningModalOpen 
+  } = useRecommendationEngine();
+
+  return (
+    <TuningDeckModal 
+      isOpen={isTuningModalOpen}
+      onClose={() => setIsTuningModalOpen(false)}
+      userProfile={userProfile}
+      updateGenreWeights={updateGenreWeights}
+      setExplorationLevel={setExplorationLevel}
+      resetAlgorithm={resetAlgorithm}
+    />
+  );
+}
 
 function FeedbackManager() {
   const { consecutiveSkips, logFeedback, setConsecutiveSkips } = useRecommendationEngine();
@@ -39,7 +81,6 @@ function AnimatedRoutes() {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<HomePage />} />
         <Route path="/playlist/:id" element={<PlaylistView />} />
-        <Route path="/tuning" element={<TuningView />} />
       </Routes>
     </AnimatePresence>
   );
@@ -49,16 +90,22 @@ function App() {
   return (
     <RecommendationEngineProvider>
       <BrowserRouter>
-        <div className="min-h-screen bg-black text-white overflow-x-hidden selection:bg-purple-500/30">
-          <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-black to-black pointer-events-none" />
-          
-          <div className="relative z-10">
-            <AnimatedRoutes />
+        <PhoneFrame>
+          <div className="relative min-h-full bg-black text-white selection:bg-white/20">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-900/30 via-black to-black pointer-events-none" />
+            
+            <div className="relative z-10 min-h-full">
+              <AnimatedRoutes />
+            </div>
           </div>
           
-          <FeedbackManager />
-          <Toaster theme="dark" position="top-center" />
-        </div>
+          {/* Modals */}
+          <div className="absolute inset-0 pointer-events-none z-40">
+            <FeedbackManager />
+            <ActivityModalManager />
+            <TuningModalManager />
+          </div>
+        </PhoneFrame>
       </BrowserRouter>
     </RecommendationEngineProvider>
   );

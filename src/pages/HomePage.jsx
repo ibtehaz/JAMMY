@@ -1,8 +1,6 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Sliders, Music, PlayCircle, Sparkles, Sun, Moon, Dumbbell, Heart, Briefcase, BookOpen, PartyPopper, Coffee, Brain } from 'lucide-react';
+import { Sliders, Music, PlayCircle, Sparkles, Sun, Moon, Dumbbell, Heart, Briefcase, BookOpen, PartyPopper, Coffee } from 'lucide-react';
 import { useRecommendationEngine } from '../context/RecommendationEngineContext';
-import ActivitySelectorModal from '../components/ActivitySelectorModal';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { motion } from 'framer-motion';
 
@@ -28,9 +26,17 @@ function PlaylistCard({ playlist, index }) {
       gradient: "from-emerald-500 to-teal-500",
       icon: Dumbbell
     },
+    study: { 
+      gradient: "from-indigo-500 to-blue-500",
+      icon: BookOpen
+    },
     chill: { 
       gradient: "from-blue-500 to-cyan-500",
       icon: Moon
+    },
+    party: { 
+      gradient: "from-pink-500 to-rose-500",
+      icon: PartyPopper
     }
   };
 
@@ -47,7 +53,7 @@ function PlaylistCard({ playlist, index }) {
     >
       <Link 
         to={`/playlist/${playlist.id}`}
-        className="group relative block overflow-hidden rounded-2xl bg-gray-900/40 border border-white/5 hover:bg-gray-800/40 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-500/10 backdrop-blur-sm"
+        className="group relative block overflow-hidden rounded-2xl glass glass-hover transition-all duration-300 hover:scale-[1.02]"
       >
         <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
         
@@ -61,7 +67,7 @@ function PlaylistCard({ playlist, index }) {
             </div>
           </div>
 
-          <h3 className="text-lg font-bold mb-0.5 group-hover:text-purple-300 transition-colors">{playlist.title}</h3>
+          <h3 className="text-lg font-bold mb-0.5 group-hover:text-white transition-colors">{playlist.title}</h3>
           <p className="text-xs text-gray-400 mb-3 line-clamp-1">{playlist.description}</p>
 
           <div className="flex items-center justify-between pt-3 border-t border-white/5">
@@ -88,7 +94,8 @@ function ActivityChip({ activity, moods, onClick }) {
       case 'Commute': return <Briefcase className="w-3.5 h-3.5" />;
       case 'Party': return <PartyPopper className="w-3.5 h-3.5" />;
       case 'Chill': return <Coffee className="w-3.5 h-3.5" />;
-      default: return <Brain className="w-3.5 h-3.5" />;
+      case 'Sleep': return <Moon className="w-3.5 h-3.5" />;
+      default: return <Music className="w-3.5 h-3.5" />;
     }
   };
 
@@ -117,7 +124,7 @@ function ActivityChip({ activity, moods, onClick }) {
         <span>{moods[0]} {moods.length > 1 ? `+ ${moods.length - 1}` : ''}</span>
       ) : (
         <>
-          <Sparkles className="w-3.5 h-3.5 text-purple-300" />
+          <Sparkles className="w-3.5 h-3.5 text-white/60" />
           <span>Set Vibe</span>
         </>
       )}
@@ -125,14 +132,16 @@ function ActivityChip({ activity, moods, onClick }) {
   );
 }
 
-export default function HomePage() {
-  const { playlists, userProfile, setActivity, setMoods, isLoadingPreviews } = useRecommendationEngine();
-  const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good Morning";
+  if (hour < 17) return "Good Afternoon";
+  return "Good Evening";
+}
 
-  const handleApplyContext = (activity, moods) => {
-    setActivity(activity);
-    setMoods(moods);
-  };
+export default function HomePage() {
+  const { playlists, userProfile, isLoadingPreviews, setIsActivityModalOpen, setIsTuningModalOpen } = useRecommendationEngine();
+  const greeting = getGreeting();
 
   // Show loading spinner while fetching preview data
   if (isLoadingPreviews) {
@@ -144,61 +153,53 @@ export default function HomePage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="max-w-6xl mx-auto p-4 pb-20"
+      className="relative min-h-full p-4 pb-4"
     >
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-        <div>
+      <div className="mb-4">
+        <div className="mb-3">
           <motion.h1 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-3xl md:text-4xl font-bold mb-1 bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 pb-1 pr-1"
+            className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400"
           >
-            Good Evening
+            {greeting}
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-gray-400 text-base"
+            className="text-gray-500 text-xs"
           >
             Your daily mixes are ready.
           </motion.p>
         </div>
         
+        {/* Activity + Tuning Deck buttons together */}
         <div className="flex items-center gap-2">
           <ActivityChip 
             activity={userProfile.currentActivity} 
             moods={userProfile.currentMoods}
             onClick={() => setIsActivityModalOpen(true)} 
           />
-          <Link to="/tuning">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white transition-colors text-xs font-semibold flex items-center gap-2 backdrop-blur-md shadow-lg"
-            >
-              <Sliders className="w-3.5 h-3.5" />
-              <span>Tune Deck</span>
-            </motion.button>
-          </Link>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setIsTuningModalOpen(true)}
+            className="px-3 py-2 rounded-full bg-white/10 border border-white/10 flex items-center gap-1.5 text-xs font-medium hover:bg-white/20 transition-all duration-300"
+          >
+            <Sliders className="w-3.5 h-3.5" />
+            <span>Tune</span>
+          </motion.button>
         </div>
       </div>
 
       {/* Playlist Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-3">
         {playlists.map((playlist, idx) => (
           <PlaylistCard key={playlist.id} playlist={playlist} index={idx} />
         ))}
       </div>
-
-      <ActivitySelectorModal 
-        isOpen={isActivityModalOpen}
-        onClose={() => setIsActivityModalOpen(false)}
-        currentActivity={userProfile.currentActivity}
-        currentMoods={userProfile.currentMoods}
-        onApply={handleApplyContext}
-      />
     </motion.div>
   );
 }

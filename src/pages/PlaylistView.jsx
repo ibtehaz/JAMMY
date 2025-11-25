@@ -9,12 +9,12 @@ export default function PlaylistView() {
   const { id } = useParams();
   const { playlists, playPlaylist, isLoadingPreviews } = useRecommendationEngine();
   
-  // Auto-play playlist on mount - MUST be before any conditional returns
+  // Start playlist when page loads
   useEffect(() => {
     if (id) {
       playPlaylist(id);
     }
-  }, [id]); // Remove playPlaylist from deps to prevent infinite loop
+  }, [id, playPlaylist]);
   
   const playlist = playlists.find(p => p.id === id);
 
@@ -36,18 +36,17 @@ export default function PlaylistView() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <Link to="/" className="flex items-center gap-2 text-gray-400 hover:text-white mb-6">
-        <ArrowLeft className="w-4 h-4" />
-        <span>Back to Home</span>
-      </Link>
-
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">{playlist.title}</h1>
-        <p className="text-gray-400">{playlist.description}</p>
-        <p className="text-sm text-gray-500 mt-2">
-          {playlist.tracks.length} tracks • {Math.round(playlist.confidence * 100)}% confident match
-        </p>
+    <div className="relative min-h-full p-4 pb-4 flex flex-col">
+      {/* Compact Header */}
+      <div className="flex items-center justify-between mb-4">
+        <Link to="/" className="flex items-center gap-2 text-gray-400 hover:text-white">
+          <ArrowLeft className="w-4 h-4" />
+          <span className="text-sm">Back</span>
+        </Link>
+        <div className="text-right">
+          <p className="text-sm font-semibold text-white">{playlist.title}</p>
+          <p className="text-[10px] text-gray-500">{playlist.tracks.length} tracks</p>
+        </div>
       </div>
 
       <NowPlaying />
