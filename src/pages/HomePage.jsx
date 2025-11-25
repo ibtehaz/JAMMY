@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Sliders, Music, PlayCircle, Sparkles, Sun, Moon, Dumbbell, Heart, Briefcase, BookOpen, PartyPopper, Coffee, Play, CloudMoon } from 'lucide-react';
 import { useRecommendationEngine } from '../context/RecommendationEngineContext';
 import LoadingSpinner from '../components/LoadingSpinner';
+import MiniPlayer from '../components/MiniPlayer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMemo } from 'react';
 
@@ -300,12 +301,15 @@ export default function HomePage() {
           <p className="text-xs text-gray-500 font-medium pt-3 pb-1">More for you</p>
         )}
 
-        <div className="grid grid-cols-1 gap-3">
+        <div className="grid grid-cols-1 gap-3 pb-24">
           {otherPlaylists.map((playlist, idx) => (
             <PlaylistCard key={playlist.id} playlist={playlist} index={idx} />
           ))}
         </div>
       </div>
+
+      {/* Mini Player - shows when a track is playing */}
+      <MiniPlayer />
     </motion.div>
   );
 }

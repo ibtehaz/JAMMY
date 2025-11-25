@@ -74,7 +74,7 @@ export default function FeedbackTimeline({ isOpen, onClose }) {
             style={{ maxHeight: '75%' }}
           >
             <div 
-              className="absolute inset-0 bg-gradient-to-b from-[#1a1a1f] via-[#141418] to-[#0a0a0c] border-t border-white/[0.08]"
+              className="absolute inset-0 bg-gradient-to-b from-[#1a1a1f] via-[#141418] to-[#0a0a0c] border-t border-white/[0.08] rounded-t-3xl"
               style={{ 
                 backdropFilter: 'blur(40px)',
                 WebkitBackdropFilter: 'blur(40px)',

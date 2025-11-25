@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+// Note: useRef and useEffect are used by SwipeableAlbumArt and QueueDrawer
 import { createPortal } from 'react-dom';
 import { Play, Pause, SkipForward, SkipBack, Heart, X, ThumbsDown, Info, ChevronUp, ListMusic } from 'lucide-react';
 import { useRecommendationEngine } from '../context/RecommendationEngineContext';
@@ -400,94 +401,51 @@ function ContextModal({ isOpen, onClose, onSubmit }) {
 }
 
 export default function NowPlaying() {
-  const { playlists, currentPlaylistId, currentTrackIndex, likeSong, dislikeSong, skipSong, playPreviousSong, playTrackAtIndex, likedTrackIds, dislikedTrackIds } = useRecommendationEngine();
-  const [isPlaying, setIsPlaying] = useState(false);
+  const { 
+    playlists, 
+    currentPlaylistId, 
+    currentTrackIndex, 
+    likeSong, 
+    unlikeSong, 
+    dislikeSong, 
+    undislikeSong, 
+    skipSong, 
+    playPreviousSong, 
+    playTrackAtIndex, 
+    likedTrackIds, 
+    dislikedTrackIds,
+    // Audio from context
+    isPlaying,
+    currentTime,
+    duration,
+    togglePlayPause,
+    seekTo,
+    currentTrack
+  } = useRecommendationEngine();
+  
   const [showReasoning, setShowReasoning] = useState(false);
   const [showContextModal, setShowContextModal] = useState(false);
   const [isQueueOpen, setIsQueueOpen] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const audioRef = useRef(null);
 
   const currentPlaylist = playlists.find(p => p.id === currentPlaylistId);
-  const currentTrack = currentPlaylist?.tracks[currentTrackIndex];
-
-  // Use ref to access fresh playlist data in handleEnded without causing re-renders
-  const playlistsRef = useRef(playlists);
-  const currentTrackIndexRef = useRef(currentTrackIndex);
-  
-  useEffect(() => {
-    playlistsRef.current = playlists;
-  }, [playlists]);
-  
-  useEffect(() => {
-    currentTrackIndexRef.current = currentTrackIndex;
-  }, [currentTrackIndex]);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio || !currentTrack?.previewUrl) return;
-
-    audio.src = currentTrack.previewUrl;
-    audio.load();
-    
-    const playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => setIsPlaying(true))
-        .catch(() => setIsPlaying(false));
-    } else {
-      setIsPlaying(true);
-    }
-    
-    setCurrentTime(0);
-    setDuration(0);
-
-    const updateTime = () => setCurrentTime(audio.currentTime);
-    const updateDuration = () => setDuration(audio.duration);
-    const handleEnded = () => {
-      setIsPlaying(false);
-      const freshPlaylists = playlistsRef.current;
-      const freshIndex = currentTrackIndexRef.current;
-      const playlist = freshPlaylists.find(p => p.id === currentPlaylistId);
-      if (playlist && freshIndex < playlist.tracks.length - 1) {
-        playTrackAtIndex(freshIndex + 1);
-      }
-    };
-
-    audio.addEventListener('timeupdate', updateTime);
-    audio.addEventListener('loadedmetadata', updateDuration);
-    audio.addEventListener('ended', handleEnded);
-
-    return () => {
-      audio.removeEventListener('timeupdate', updateTime);
-      audio.removeEventListener('loadedmetadata', updateDuration);
-      audio.removeEventListener('ended', handleEnded);
-    };
-  }, [currentTrack?.id, currentPlaylistId, playTrackAtIndex]);
-
-  const togglePlayPause = async () => {
-    if (!audioRef.current || !currentTrack?.previewUrl) {
-      toast.error("No preview available for this track");
-      return;
-    }
-
-    try {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        await audioRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    } catch (error) {
-      toast.error("Failed to play audio");
-    }
-  };
 
   if (!currentTrack) return null;
 
+  const isLiked = likedTrackIds.has(currentTrack.id);
+  const isDisliked = dislikedTrackIds.has(currentTrack.id);
+
   const handleLike = () => {
-    setShowContextModal(true);
+    if (isLiked) {
+      // Toggle off - unlike
+      unlikeSong(currentTrack.id);
+      toast("Removed from likes", {
+        description: "We've updated your preferences",
+        icon: <Heart className="w-5 h-5 text-gray-400" />
+      });
+    } else {
+      // Show context modal for new like
+      setShowContextModal(true);
+    }
   };
 
   const handleContextSubmit = (context) => {
@@ -507,11 +465,21 @@ export default function NowPlaying() {
   };
 
   const handleDislike = () => {
-    dislikeSong(currentTrack.id);
-    toast("Disliked", {
-      description: "We'll show fewer songs like this",
-      icon: <ThumbsDown className="w-5 h-5 text-red-400" />
-    });
+    if (isDisliked) {
+      // Toggle off - undislike (no skip)
+      undislikeSong(currentTrack.id);
+      toast("Removed dislike", {
+        description: "This song can appear again",
+        icon: <ThumbsDown className="w-5 h-5 text-gray-400" />
+      });
+    } else {
+      // New dislike - skip to next
+      dislikeSong(currentTrack.id);
+      toast("Disliked", {
+        description: "We'll show fewer songs like this",
+        icon: <ThumbsDown className="w-5 h-5 text-red-400" />
+      });
+    }
   };
 
   return (
@@ -562,13 +530,7 @@ export default function NowPlaying() {
             min="0"
             max={duration || 100}
             value={currentTime}
-            onChange={(e) => {
-              const newTime = parseFloat(e.target.value);
-              setCurrentTime(newTime);
-              if (audioRef.current) {
-                audioRef.current.currentTime = newTime;
-              }
-            }}
+            onChange={(e) => seekTo(parseFloat(e.target.value))}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
         </div>
@@ -673,9 +635,6 @@ export default function NowPlaying() {
         likedTrackIds={likedTrackIds}
         dislikedTrackIds={dislikedTrackIds}
       />
-
-      {/* Hidden Audio Element */}
-      <audio ref={audioRef} />
     </motion.div>
   );
 }

@@ -245,6 +245,12 @@ export function RecommendationEngineProvider({ children }) {
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
   const [isTuningModalOpen, setIsTuningModalOpen] = useState(false);
   
+  // Audio state - global for persistent playback
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const audioRef = useRef(null);
+  
   const debounceTimerRef = useRef(null);
   const enrichedTracksRef = useRef([]);
   const userProfileRef = useRef(userProfile);
@@ -474,6 +480,34 @@ export function RecommendationEngineProvider({ children }) {
     });
   };
 
+  const unlikeSong = (trackId) => {
+    // Remove from liked (reverse the genre weight boost)
+    setLikedTrackIds(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(trackId);
+      return newSet;
+    });
+    
+    const track = tracksData.find(t => t.id === trackId);
+    if (track) {
+      setUserProfile(prev => {
+        const newWeights = { ...prev.genreWeights };
+        track.genres.forEach(g => {
+          if (newWeights[g] !== undefined) {
+            newWeights[g] = Math.max(newWeights[g] - 0.05, 0);
+          }
+        });
+        return { ...prev, genreWeights: newWeights };
+      });
+    }
+
+    logFeedback({
+      type: "unlike",
+      trackId,
+      impact: "Removed from likes"
+    });
+  };
+
   const skipSong = (trackId, reason = null) => {
     setConsecutiveSkips(prev => prev + 1);
     
@@ -524,6 +558,34 @@ export function RecommendationEngineProvider({ children }) {
     if (currentPlaylist && currentTrackIndex < currentPlaylist.tracks.length - 1) {
       setCurrentTrackIndex(prev => prev + 1);
     }
+  };
+
+  const undislikeSong = (trackId) => {
+    // Remove from disliked (reverse the genre weight penalty)
+    setDislikedTrackIds(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(trackId);
+      return newSet;
+    });
+    
+    const track = tracksData.find(t => t.id === trackId);
+    if (track) {
+      setUserProfile(prev => {
+        const newWeights = { ...prev.genreWeights };
+        track.genres.forEach(g => {
+          if (newWeights[g] !== undefined) {
+            newWeights[g] = Math.min(newWeights[g] + 0.05, 1);
+          }
+        });
+        return { ...prev, genreWeights: newWeights };
+      });
+    }
+
+    logFeedback({
+      type: "undislike",
+      trackId,
+      impact: "Removed dislike"
+    });
   };
 
   const logFeedback = (event) => {
@@ -593,6 +655,94 @@ export function RecommendationEngineProvider({ children }) {
     setCurrentTrackIndex(prev => index >= 0 ? index : prev);
   }, []);
 
+  // Get current track for audio
+  const currentPlaylist = playlists.find(p => p.id === currentPlaylistId);
+  const currentTrack = currentPlaylist?.tracks[currentTrackIndex];
+
+  // Audio playback effect - runs when track changes
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !currentTrack?.previewUrl) {
+      setIsPlaying(false);
+      return;
+    }
+
+    // Only change source if it's different
+    if (audio.src !== currentTrack.previewUrl) {
+      audio.src = currentTrack.previewUrl;
+      audio.load();
+      setCurrentTime(0);
+      setDuration(0);
+    }
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => setIsPlaying(true))
+        .catch(() => setIsPlaying(false));
+    }
+  }, [currentTrack?.id, currentTrack?.previewUrl]);
+
+  // Audio event listeners
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const updateTime = () => setCurrentTime(audio.currentTime);
+    const updateDuration = () => setDuration(audio.duration);
+    const handleEnded = () => {
+      setIsPlaying(false);
+      // Auto-advance to next track
+      const playlist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
+      const idx = currentTrackIndexRef.current;
+      if (playlist && idx < playlist.tracks.length - 1) {
+        setCurrentTrackIndex(idx + 1);
+      }
+    };
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+
+    audio.addEventListener('timeupdate', updateTime);
+    audio.addEventListener('loadedmetadata', updateDuration);
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+
+    return () => {
+      audio.removeEventListener('timeupdate', updateTime);
+      audio.removeEventListener('loadedmetadata', updateDuration);
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('pause', handlePause);
+    };
+  }, []);
+
+  const togglePlayPause = useCallback(async () => {
+    const audio = audioRef.current;
+    if (!audio || !currentTrack?.previewUrl) {
+      toast.error("No preview available for this track");
+      return;
+    }
+
+    try {
+      if (isPlaying) {
+        audio.pause();
+      } else {
+        await audio.play();
+      }
+    } catch (error) {
+      toast.error("Failed to play audio");
+    }
+  }, [isPlaying, currentTrack?.previewUrl]);
+
+  const seekTo = useCallback((time) => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.currentTime = time;
+      setCurrentTime(time);
+    }
+  }, []);
+
   const value = {
     userProfile,
     playlists,
@@ -609,7 +759,9 @@ export function RecommendationEngineProvider({ children }) {
     setMoods,
     toggleMood,
     likeSong,
+    unlikeSong,
     dislikeSong,
+    undislikeSong,
     skipSong,
     undoFeedbackEvent,
     resetAlgorithm,
@@ -622,12 +774,21 @@ export function RecommendationEngineProvider({ children }) {
     isActivityModalOpen,
     setIsActivityModalOpen,
     isTuningModalOpen,
-    setIsTuningModalOpen
+    setIsTuningModalOpen,
+    // Audio state & controls
+    isPlaying,
+    currentTime,
+    duration,
+    togglePlayPause,
+    seekTo,
+    currentTrack
   };
 
   return (
     <RecommendationEngineContext.Provider value={value}>
       {children}
+      {/* Global audio element for persistent playback */}
+      <audio ref={audioRef} />
     </RecommendationEngineContext.Provider>
   );
 }
