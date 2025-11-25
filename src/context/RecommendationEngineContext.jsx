@@ -78,27 +78,42 @@ function generateReasoning(track, userProfile, score) {
   return reasons.slice(0, 3);  // Max 3 reasons
 }
 
-function generatePlaylist(context, tracks, userProfile, feedbackTimeline = [], limit = 20) {
-  // Get IDs of skipped tracks from the timeline
-  const skippedTrackIds = new Set(
-    feedbackTimeline
-      .filter(e => e.type === 'skip')
-      .map(e => e.trackId)
-  );
+// Helper: Count how many times a track has been skipped
+function getSkipCountForTrack(trackId, feedbackTimeline) {
+  return feedbackTimeline.filter(e => 
+    e.type === 'skip' && e.trackId === trackId
+  ).length;
+}
 
+// Helper: Calculate skip penalty multiplier based on skip count
+function calculateSkipPenalty(skipCount) {
+  // Progressive penalty: 0 skips = 1.0x, 1 skip = 0.75x, 2 skips = 0.50x, 3 skips = 0.30x, 4+ skips = 0.15x
+  return Math.max(0.15, 1 - (skipCount * 0.25));
+}
+
+function generatePlaylist(context, tracks, userProfile, feedbackTimeline = [], limit = 20) {
   const scored = tracks
-    .filter(t => !skippedTrackIds.has(t.id)) // Filter out skipped tracks
     .map(t => {
-      const score = scoreTrack(t, userProfile);
+      // Calculate base score from user preferences
+      const baseScore = scoreTrack(t, userProfile);
+      
+      // Apply skip penalty if track has been skipped before
+      const skipCount = getSkipCountForTrack(t.id, feedbackTimeline);
+      const skipPenalty = calculateSkipPenalty(skipCount);
+      const finalScore = baseScore * skipPenalty;
+      
       return {
         ...t,
-        score,
-        confidence: score,
-        reasoning: generateReasoning(t, userProfile, score)
+        score: finalScore,
+        confidence: finalScore,
+        baseScore,  // Keep base score for debugging
+        skipCount,  // Track skip count for transparency
+        skipPenalty, // Track penalty applied
+        reasoning: generateReasoning(t, userProfile, finalScore)
       };
     });
 
-  // Sort by score and slice
+  // Sort by final score and slice to get top tracks
   return scored.sort((a, b) => b.score - a.score).slice(0, limit);
 }
 
@@ -208,7 +223,7 @@ export function RecommendationEngineProvider({ children }) {
       };
     });
     
-    // Fix: Preserve current playing track position if rankings shifted
+    // Preserve current playing track position if rankings shifted
     if (currentPlaylistId) {
       const currentPlaylist = playlists.find(p => p.id === currentPlaylistId);
       const currentTrack = currentPlaylist?.tracks[currentTrackIndex];

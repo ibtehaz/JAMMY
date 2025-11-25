@@ -57,11 +57,10 @@ export default function TuningView() {
   // Discrete exploration levels
   const explorationLevels = [
     { value: 0, label: "Home Base", desc: "Familiar favorites only" },
-    { value: 0.2, label: "Near Shore", desc: "Mostly familiar, slight variety" },
-    { value: 0.4, label: "Scenic Route", desc: "Balanced mix of hits & new" },
-    { value: 0.6, label: "New Territory", desc: "Leaning towards discovery" },
-    { value: 0.8, label: "Wild Explorer", desc: "Deep cuts and new finds" },
-    { value: 1.0, label: "Totally Unknown", desc: "Complete discovery mode" }
+    { value: 0.25, label: "Near Shore", desc: "Mostly familiar, slight variety" },
+    { value: 0.5, label: "Balanced", desc: "Even mix of known & new" },
+    { value: 0.75, label: "Adventurous", desc: "Leaning towards discovery" },
+    { value: 1.0, label: "Explorer", desc: "Deep cuts and surprises" }
   ];
 
   return (
@@ -114,19 +113,44 @@ export default function TuningView() {
           </div>
           
           <div className="space-y-3">
-            <div className="relative h-2 bg-gray-700 rounded-full overflow-hidden">
+            <div className="relative h-2 bg-gray-700 rounded-full">
               <motion.div 
-                className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-purple-500"
-                style={{ width: `${tempExplorationLevel * 100}%` }}
+                className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full pointer-events-none"
+                style={{ 
+                  width: `calc(${tempExplorationLevel * 100}% - ${tempExplorationLevel * 20}px + 10px)`
+                }}
               />
               <input
                 type="range"
                 min="0"
                 max="1"
-                step="0.2"
+                step="0.25"
                 value={tempExplorationLevel}
                 onChange={(e) => setTempExplorationLevel(parseFloat(e.target.value))}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                className="absolute inset-0 w-full h-full cursor-pointer appearance-none bg-transparent
+                  [&::-webkit-slider-thumb]:appearance-none
+                  [&::-webkit-slider-thumb]:w-5
+                  [&::-webkit-slider-thumb]:h-5
+                  [&::-webkit-slider-thumb]:rounded-full
+                  [&::-webkit-slider-thumb]:bg-white
+                  [&::-webkit-slider-thumb]:shadow-lg
+                  [&::-webkit-slider-thumb]:shadow-purple-500/50
+                  [&::-webkit-slider-thumb]:border-2
+                  [&::-webkit-slider-thumb]:border-purple-400
+                  [&::-webkit-slider-thumb]:cursor-grab
+                  [&::-webkit-slider-thumb]:hover:scale-110
+                  [&::-webkit-slider-thumb]:transition-transform
+                  [&::-webkit-slider-thumb]:active:cursor-grabbing
+                  [&::-moz-range-thumb]:w-5
+                  [&::-moz-range-thumb]:h-5
+                  [&::-moz-range-thumb]:rounded-full
+                  [&::-moz-range-thumb]:bg-white
+                  [&::-moz-range-thumb]:border-2
+                  [&::-moz-range-thumb]:border-purple-400
+                  [&::-moz-range-thumb]:cursor-grab
+                  [&::-moz-range-thumb]:hover:scale-110
+                  [&::-moz-range-thumb]:transition-transform
+                  [&::-moz-range-thumb]:active:cursor-grabbing"
               />
             </div>
             
@@ -170,9 +194,9 @@ export default function TuningView() {
                     {Math.round(tempGenreWeights[genre] * 100)}%
                   </span>
                 </div>
-                <div className="relative h-1.5 bg-gray-700 rounded-full overflow-hidden group">
+                <div className="relative h-1.5 bg-gray-700 rounded-full group">
                   <motion.div 
-                    className="absolute top-0 left-0 h-full bg-white group-hover:bg-purple-400 transition-colors"
+                    className="absolute top-0 left-0 h-full bg-white group-hover:bg-purple-400 transition-colors rounded-full pointer-events-none"
                     style={{ width: `${tempGenreWeights[genre] * 100}%` }}
                   />
                   <input
@@ -185,7 +209,34 @@ export default function TuningView() {
                       ...prev,
                       [genre]: parseFloat(e.target.value)
                     }))}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    className="absolute inset-0 w-full h-full cursor-pointer appearance-none bg-transparent
+                      [&::-webkit-slider-thumb]:appearance-none
+                      [&::-webkit-slider-thumb]:w-4
+                      [&::-webkit-slider-thumb]:h-4
+                      [&::-webkit-slider-thumb]:rounded-full
+                      [&::-webkit-slider-thumb]:bg-white
+                      [&::-webkit-slider-thumb]:shadow-md
+                      [&::-webkit-slider-thumb]:shadow-white/30
+                      [&::-webkit-slider-thumb]:border-2
+                      [&::-webkit-slider-thumb]:border-gray-300
+                      [&::-webkit-slider-thumb]:cursor-grab
+                      [&::-webkit-slider-thumb]:hover:scale-125
+                      [&::-webkit-slider-thumb]:hover:border-purple-400
+                      [&::-webkit-slider-thumb]:transition-all
+                      [&::-webkit-slider-thumb]:active:cursor-grabbing
+                      [&::-webkit-slider-thumb]:active:scale-110
+                      [&::-moz-range-thumb]:w-4
+                      [&::-moz-range-thumb]:h-4
+                      [&::-moz-range-thumb]:rounded-full
+                      [&::-moz-range-thumb]:bg-white
+                      [&::-moz-range-thumb]:border-2
+                      [&::-moz-range-thumb]:border-gray-300
+                      [&::-moz-range-thumb]:cursor-grab
+                      [&::-moz-range-thumb]:hover:scale-125
+                      [&::-moz-range-thumb]:hover:border-purple-400
+                      [&::-moz-range-thumb]:transition-all
+                      [&::-moz-range-thumb]:active:cursor-grabbing
+                      [&::-moz-range-thumb]:active:scale-110"
                   />
                 </div>
               </div>

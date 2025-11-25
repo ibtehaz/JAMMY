@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Play, Pause, SkipForward, SkipBack, Heart, X, ThumbsDown, Info, Shuffle, ChevronUp, ListMusic } from 'lucide-react';
+import { Play, Pause, SkipForward, SkipBack, Heart, X, ThumbsDown, Info, ChevronUp, ListMusic } from 'lucide-react';
 import { useRecommendationEngine } from '../context/RecommendationEngineContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -230,30 +230,17 @@ function ContextModal({ track, isOpen, onClose, onSubmit }) {
 }
 
 export default function NowPlaying() {
-  const { playlists, currentPlaylistId, currentTrackIndex, likeSong, dislikeSong, skipSong, setExplorationLevel, playPreviousSong, playTrackAtIndex, userProfile } = useRecommendationEngine();
+  const { playlists, currentPlaylistId, currentTrackIndex, likeSong, dislikeSong, skipSong, playPreviousSong, playTrackAtIndex } = useRecommendationEngine();
   const [isPlaying, setIsPlaying] = useState(false);
   const [showReasoning, setShowReasoning] = useState(false);
   const [showContextModal, setShowContextModal] = useState(false);
   const [isQueueOpen, setIsQueueOpen] = useState(false);
-  const [smartShuffle, setSmartShuffle] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const audioRef = useRef(null);
 
   const currentPlaylist = playlists.find(p => p.id === currentPlaylistId);
   const currentTrack = currentPlaylist?.tracks[currentTrackIndex];
-
-  // Toggle Smart Shuffle
-  const toggleSmartShuffle = () => {
-    const newState = !smartShuffle;
-    setSmartShuffle(newState);
-    // If turning on, set exploration to high (0.8). If off, reset to neutral (0.5)
-    setExplorationLevel(newState ? 0.8 : 0.5);
-    toast(newState ? "Smart Shuffle On" : "Smart Shuffle Off", {
-      description: newState ? "Finding new discoveries for you" : "Back to your regular mix",
-      icon: <Shuffle className={`w-4 h-4 ${newState ? 'text-green-400' : 'text-gray-400'}`} />
-    });
-  };
 
   // Audio logic
   useEffect(() => {
@@ -407,10 +394,10 @@ export default function NowPlaying() {
         <div className="flex items-center gap-5 mb-4">
           <motion.button 
             whileTap={{ scale: 0.9 }} 
-            className={`p-2 rounded-full transition-colors ${smartShuffle ? 'text-green-400 bg-green-400/10' : 'text-gray-400 hover:text-white'}`}
-            onClick={toggleSmartShuffle}
+            onClick={handleDislike}
+            className="p-2 text-gray-400 hover:text-red-500 transition-colors"
           >
-            <Shuffle className="w-4 h-4" />
+            <ThumbsDown className="w-4 h-4" />
           </motion.button>
 
           <motion.button 
