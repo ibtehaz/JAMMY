@@ -171,6 +171,7 @@ export default function TuningDeckModal({
             exit={{ opacity: 0 }}
             onClick={onClose}
             className="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 pointer-events-auto"
+            data-modal-backdrop="true"
           />
           
           <motion.div
@@ -281,7 +282,7 @@ export default function TuningDeckModal({
                       onClose();
                     }
                   }}
-                  className="flex-1 py-2.5 text-gray-500 hover:text-red-400 text-sm font-medium rounded-xl hover:bg-white/5 transition-colors flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2.5 bg-white/5 text-red-400 text-sm font-semibold rounded-xl hover:bg-white/10 transition-colors flex items-center justify-center gap-1.5"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   Reset

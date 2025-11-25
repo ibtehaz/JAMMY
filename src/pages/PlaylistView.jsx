@@ -9,7 +9,6 @@ export default function PlaylistView() {
   const { id } = useParams();
   const { playlists, playPlaylist, isLoadingPreviews } = useRecommendationEngine();
   
-  // Start playlist when page loads
   useEffect(() => {
     if (id) {
       playPlaylist(id);
@@ -18,9 +17,12 @@ export default function PlaylistView() {
   
   const playlist = playlists.find(p => p.id === id);
 
-  // Show loading spinner while data is being fetched
   if (isLoadingPreviews || playlists.length === 0) {
-    return <LoadingSpinner message="Loading your playlist..." />;
+    return (
+      <div className="flex items-center justify-center h-full min-h-[calc(100vh-200px)]">
+        <LoadingSpinner message="Loading playlist..." />
+      </div>
+    );
   }
 
   if (!playlist) {
@@ -37,7 +39,6 @@ export default function PlaylistView() {
 
   return (
     <div className="relative min-h-full p-4 pb-4 flex flex-col">
-      {/* Compact Header */}
       <div className="flex items-center justify-between mb-4">
         <Link to="/" className="flex items-center gap-2 text-gray-400 hover:text-white">
           <ArrowLeft className="w-4 h-4" />

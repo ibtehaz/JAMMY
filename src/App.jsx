@@ -99,7 +99,6 @@ function App() {
             </div>
           </div>
           
-          {/* Modals */}
           <div className="absolute inset-0 pointer-events-none z-40">
             <FeedbackManager />
             <ActivityModalManager />

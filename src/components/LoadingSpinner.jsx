@@ -3,7 +3,7 @@ import { Music } from 'lucide-react';
 
 export default function LoadingSpinner({ message = "Jammin'..." }) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center justify-center h-full min-h-[500px]">
       <motion.div
         animate={{ 
           rotate: 360,

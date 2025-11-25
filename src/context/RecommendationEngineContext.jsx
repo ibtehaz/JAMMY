@@ -13,7 +13,6 @@ export function useRecommendationEngine() {
   return context;
 }
 
-// Map user context strings to track context values
 const contextMapping = {
   "Great for workouts": "Workout",
   "Good focus music": "Study",
@@ -21,7 +20,6 @@ const contextMapping = {
   "Just love this song": null
 };
 
-// Energy ranges for different contexts
 const energyRanges = {
   "Workout": { min: 0.7, max: 1.0 },
   "Study": { min: 0.2, max: 0.5 },
@@ -34,22 +32,17 @@ const energyRanges = {
 function scoreTrack(track, userProfile, playlistContext = null) {
   let score = 0;
   
-  // Genre match (35%)
   const genreCount = track.genres.length || 1;
   const genreScore = track.genres.reduce((sum, g) => {
     return sum + (userProfile.genreWeights[g] || 0);
   }, 0) / genreCount;
   score += genreScore * 0.35;
   
-  // Familiarity vs discovery (25%)
-  // At exploration=0: prefer high familiarity
-  // At exploration=1: prefer low familiarity (new discoveries)
   const exploration = userProfile.explorationLevel;
   const targetFamiliarity = 1 - exploration;
   const familiarityMatch = 1 - Math.abs(track.familiarity - targetFamiliarity);
   score += familiarityMatch * 0.25;
   
-  // Activity match (20%)
   const activityToMatch = playlistContext || userProfile.currentActivity;
   if (activityToMatch) {
     const activityMatch = track.contexts.includes(activityToMatch);
@@ -58,7 +51,6 @@ function scoreTrack(track, userProfile, playlistContext = null) {
     score += 0.1;
   }
   
-  // Mood match (10%)
   if (userProfile.currentMoods.length > 0) {
     const moodOverlap = userProfile.currentMoods.filter(m => 
       track.moods.includes(m)
@@ -68,7 +60,6 @@ function scoreTrack(track, userProfile, playlistContext = null) {
     score += 0.05;
   }
 
-  // Energy match (5%)
   const contextForEnergy = playlistContext || userProfile.currentActivity;
   if (contextForEnergy && energyRanges[contextForEnergy]) {
     const { min, max } = energyRanges[contextForEnergy];
@@ -78,7 +69,6 @@ function scoreTrack(track, userProfile, playlistContext = null) {
     }
   }
 
-  // Recent like context bonus (5%)
   const recentLikeContexts = userProfile.recentLikeContexts || [];
   if (recentLikeContexts.length > 0) {
     const mappedContexts = recentLikeContexts
@@ -96,31 +86,27 @@ function scoreTrack(track, userProfile, playlistContext = null) {
 function generateReasoning(track, userProfile, score) {
   const reasons = [];
   
-  // Genre match
   track.genres.forEach(g => {
     if (userProfile.genreWeights[g] > 0.5) {
       reasons.push(`Matches your ${g} tuning (+${Math.round(userProfile.genreWeights[g] * 100)}%)`);
     }
   });
   
-  // Activity/context
   if (userProfile.currentActivity && track.contexts.includes(userProfile.currentActivity)) {
     reasons.push(`Great for ${userProfile.currentActivity.toLowerCase()} context`);
   }
   
-  // Familiarity
   if (track.familiarity > 0.7 && userProfile.explorationLevel < 0.5) {
     reasons.push("One of your favorites");
   } else if (track.familiarity < 0.3 && userProfile.explorationLevel > 0.5) {
     reasons.push("New discovery matching your taste");
   }
   
-  // Similar to liked songs
   if (track.similarTo && track.similarTo.length > 0) {
     reasons.push(`Similar to ${track.similarTo.length} songs you liked`);
   }
   
-  return reasons.slice(0, 3);  // Max 3 reasons
+  return reasons.slice(0, 3);
 }
 
 function getSkipCountForTrack(trackId, feedbackTimeline) {
@@ -133,15 +119,23 @@ function calculateSkipPenalty(skipCount) {
   return Math.max(0.15, 1 - (skipCount * 0.25));
 }
 
-function generatePlaylist(playlistConfig, tracks, userProfile, feedbackTimeline = [], limit = 20) {
+function generatePlaylist(playlistConfig, tracks, userProfile, feedbackTimeline = [], likedIds = new Set(), dislikedIds = new Set(), limit = 20) {
   const playlistContext = playlistConfig?.context || null;
   
   const scored = tracks
+    .filter(t => !dislikedIds.has(t.id)) // Filter out disliked tracks entirely
     .map(t => {
       const baseScore = scoreTrack(t, userProfile, playlistContext);
       const skipCount = getSkipCountForTrack(t.id, feedbackTimeline);
-      const skipPenalty = calculateSkipPenalty(skipCount);
-      const finalScore = baseScore * skipPenalty;
+      const isLiked = likedIds.has(t.id);
+      
+      // Liked tracks: boost score and reduce skip penalty impact
+      const skipPenalty = isLiked 
+        ? Math.max(0.9, calculateSkipPenalty(skipCount)) // Liked tracks have max 10% skip penalty
+        : calculateSkipPenalty(skipCount);
+      
+      const likeBoost = isLiked ? 1.1 : 1.0; // 10% boost for liked tracks
+      const finalScore = baseScore * skipPenalty * likeBoost;
       
       return {
         ...t,
@@ -150,6 +144,7 @@ function generatePlaylist(playlistConfig, tracks, userProfile, feedbackTimeline 
         baseScore,
         skipCount,
         skipPenalty,
+        isLiked,
         reasoning: generateReasoning(t, userProfile, finalScore)
       };
     });
@@ -168,7 +163,7 @@ const playlistContexts = [
     id: "favorites",
     title: "Favorites Mix",
     description: "Your most-loved songs",
-    context: null // Special case: generated from high-score tracks regardless of context
+    context: null
   },
   {
     id: "workout",
@@ -193,6 +188,12 @@ const playlistContexts = [
     title: "Party Mode",
     description: "High-energy bangers for the night",
     context: "Party"
+  },
+  {
+    id: "sleep",
+    title: "Sleep Sounds",
+    description: "Gentle tracks to drift off to",
+    context: "Sleep"
   }
 ];
 
@@ -207,14 +208,13 @@ const initialUserProfile = {
     country: 0.4,
     jazz: 0.3
   },
-  explorationLevel: 0.5,  // 0=familiar, 1=adventurous
+  explorationLevel: 0.5,
   currentActivity: null,
   currentMoods: [],
   recentLikeContexts: []
 };
 
 export function RecommendationEngineProvider({ children }) {
-  // Initialize state from localStorage if available
   const [userProfile, setUserProfile] = useState(() => {
     const saved = localStorage.getItem('musicRecc_userProfile');
     return saved ? JSON.parse(saved) : initialUserProfile;
@@ -228,6 +228,16 @@ export function RecommendationEngineProvider({ children }) {
     const saved = localStorage.getItem('musicRecc_feedbackTimeline');
     return saved ? JSON.parse(saved) : [];
   });
+
+  const [likedTrackIds, setLikedTrackIds] = useState(() => {
+    const saved = localStorage.getItem('musicRecc_likedTracks');
+    return saved ? new Set(JSON.parse(saved)) : new Set();
+  });
+
+  const [dislikedTrackIds, setDislikedTrackIds] = useState(() => {
+    const saved = localStorage.getItem('musicRecc_dislikedTracks');
+    return saved ? new Set(JSON.parse(saved)) : new Set();
+  });
   
   const [consecutiveSkips, setConsecutiveSkips] = useState(0);
   const [enrichedTracks, setEnrichedTracks] = useState([]);
@@ -237,8 +247,14 @@ export function RecommendationEngineProvider({ children }) {
   
   const debounceTimerRef = useRef(null);
   const enrichedTracksRef = useRef([]);
+  const userProfileRef = useRef(userProfile);
+  const feedbackTimelineRef = useRef(feedbackTimeline);
+  const currentPlaylistIdRef = useRef(currentPlaylistId);
+  const currentTrackIndexRef = useRef(currentTrackIndex);
+  const playlistsRef = useRef(playlists);
+  const likedTrackIdsRef = useRef(likedTrackIds);
+  const dislikedTrackIdsRef = useRef(dislikedTrackIds);
 
-  // Save to localStorage
   useEffect(() => {
     localStorage.setItem('musicRecc_userProfile', JSON.stringify(userProfile));
   }, [userProfile]);
@@ -247,11 +263,18 @@ export function RecommendationEngineProvider({ children }) {
     localStorage.setItem('musicRecc_feedbackTimeline', JSON.stringify(feedbackTimeline));
   }, [feedbackTimeline]);
 
-  // Load track previews from iTunes
+  useEffect(() => {
+    localStorage.setItem('musicRecc_likedTracks', JSON.stringify([...likedTrackIds]));
+  }, [likedTrackIds]);
+
+  useEffect(() => {
+    localStorage.setItem('musicRecc_dislikedTracks', JSON.stringify([...dislikedTrackIds]));
+  }, [dislikedTrackIds]);
+
   useEffect(() => {
     async function loadPreviews() {
       setIsLoadingPreviews(true);
-      const enriched = await enrichTracksWithPreviews(tracksData, 150);
+      const enriched = await enrichTracksWithPreviews(tracksData);
       enrichedTracksRef.current = enriched;
       setEnrichedTracks(enriched);
       setIsLoadingPreviews(false);
@@ -259,10 +282,37 @@ export function RecommendationEngineProvider({ children }) {
     loadPreviews();
   }, []);
   
-  // Keep ref in sync with state
   useEffect(() => {
     enrichedTracksRef.current = enrichedTracks;
   }, [enrichedTracks]);
+
+  useEffect(() => {
+    userProfileRef.current = userProfile;
+  }, [userProfile]);
+
+  useEffect(() => {
+    feedbackTimelineRef.current = feedbackTimeline;
+  }, [feedbackTimeline]);
+
+  useEffect(() => {
+    currentPlaylistIdRef.current = currentPlaylistId;
+  }, [currentPlaylistId]);
+
+  useEffect(() => {
+    currentTrackIndexRef.current = currentTrackIndex;
+  }, [currentTrackIndex]);
+
+  useEffect(() => {
+    playlistsRef.current = playlists;
+  }, [playlists]);
+
+  useEffect(() => {
+    likedTrackIdsRef.current = likedTrackIds;
+  }, [likedTrackIds]);
+
+  useEffect(() => {
+    dislikedTrackIdsRef.current = dislikedTrackIds;
+  }, [dislikedTrackIds]);
 
   const debouncedRegenerate = useCallback(() => {
     if (debounceTimerRef.current) {
@@ -273,7 +323,6 @@ export function RecommendationEngineProvider({ children }) {
     }, 300);
   }, []);
 
-  // Regenerate playlists when preferences change
   useEffect(() => {
     if (enrichedTracks.length > 0) {
       debouncedRegenerate();
@@ -287,8 +336,16 @@ export function RecommendationEngineProvider({ children }) {
 
   const regeneratePlaylists = () => {
     const tracksToUse = enrichedTracksRef.current.length > 0 ? enrichedTracksRef.current : tracksData;
+    const currentProfile = userProfileRef.current;
+    const currentFeedback = feedbackTimelineRef.current;
+    
+    // Use refs to get fresh values (avoid stale closure)
+    const freshPlaylistId = currentPlaylistIdRef.current;
+    const freshPlaylists = playlistsRef.current;
+    const freshTrackIndex = currentTrackIndexRef.current;
+    
     const newPlaylists = playlistContexts.map(ctx => {
-      const tracks = generatePlaylist(ctx, tracksToUse, userProfile, feedbackTimeline);
+      const tracks = generatePlaylist(ctx, tracksToUse, currentProfile, currentFeedback, likedTrackIdsRef.current, dislikedTrackIdsRef.current);
       const avgConfidence = tracks.reduce((sum, t) => sum + t.confidence, 0) / (tracks.length || 1);
       
       return {
@@ -299,17 +356,16 @@ export function RecommendationEngineProvider({ children }) {
       };
     });
     
-    // Preserve current playing track position if rankings shifted
-    if (currentPlaylistId) {
-      const currentPlaylist = playlists.find(p => p.id === currentPlaylistId);
-      const currentTrack = currentPlaylist?.tracks[currentTrackIndex];
+    // Preserve current track position when playlists regenerate
+    if (freshPlaylistId) {
+      const currentPlaylist = freshPlaylists.find(p => p.id === freshPlaylistId);
+      const currentTrack = currentPlaylist?.tracks[freshTrackIndex];
       
       if (currentTrack) {
-        const newCurrentPlaylist = newPlaylists.find(p => p.id === currentPlaylistId);
+        const newCurrentPlaylist = newPlaylists.find(p => p.id === freshPlaylistId);
         if (newCurrentPlaylist) {
           const newIndex = newCurrentPlaylist.tracks.findIndex(t => t.id === currentTrack.id);
-          if (newIndex !== -1 && newIndex !== currentTrackIndex) {
-            // Update index to match where the song moved to
+          if (newIndex !== -1 && newIndex !== freshTrackIndex) {
             setCurrentTrackIndex(newIndex);
           }
         }
@@ -320,7 +376,6 @@ export function RecommendationEngineProvider({ children }) {
   };
 
   const updateGenreWeights = (newWeights) => {
-    // Capture old weights for undo
     const oldWeights = {};
     Object.keys(newWeights).forEach(k => {
       oldWeights[k] = userProfile.genreWeights[k];
@@ -334,7 +389,7 @@ export function RecommendationEngineProvider({ children }) {
     logFeedback({
       type: "tuning_change",
       details: { type: "batch_update" },
-      restoreState: { genreWeights: oldWeights }, // Save for undo
+      restoreState: { genreWeights: oldWeights },
       impact: "Updated multiple genre preferences"
     });
   };
@@ -346,7 +401,7 @@ export function RecommendationEngineProvider({ children }) {
     logFeedback({
       type: "tuning_change",
       details: { setting: "exploration", from: oldLevel, to: level },
-      restoreState: { explorationLevel: oldLevel }, // Save for undo
+      restoreState: { explorationLevel: oldLevel },
       impact: level > oldLevel ? "More adventurous recommendations" : "More familiar recommendations"
     });
   };
@@ -372,7 +427,7 @@ export function RecommendationEngineProvider({ children }) {
       const currentMoods = prev.currentMoods;
       const newMoods = currentMoods.includes(mood)
         ? currentMoods.filter(m => m !== mood)
-        : [...currentMoods, mood].slice(0, 3); // Max 3 moods
+        : [...currentMoods, mood].slice(0, 3);
       
       return { ...prev, currentMoods: newMoods };
     });
@@ -381,7 +436,14 @@ export function RecommendationEngineProvider({ children }) {
   const likeSong = (trackId, context = null) => {
     setConsecutiveSkips(0);
     
-    // Boost liked genres
+    // Add to liked, remove from disliked
+    setLikedTrackIds(prev => new Set([...prev, trackId]));
+    setDislikedTrackIds(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(trackId);
+      return newSet;
+    });
+    
     const track = tracksData.find(t => t.id === trackId);
     if (track) {
       setUserProfile(prev => {
@@ -392,9 +454,8 @@ export function RecommendationEngineProvider({ children }) {
           }
         });
         
-        // Save context to profile if provided
         const newLikeContexts = context 
-          ? [context, ...(prev.recentLikeContexts || [])].slice(0, 5) // Keep last 5 contexts
+          ? [context, ...(prev.recentLikeContexts || [])].slice(0, 5)
           : prev.recentLikeContexts;
 
         return { 
@@ -423,7 +484,6 @@ export function RecommendationEngineProvider({ children }) {
       impact: reason ? `Noted: ${reason}` : "Fewer songs like this"
     });
     
-    // Move to next track
     const currentPlaylist = playlists.find(p => p.id === currentPlaylistId);
     if (currentPlaylist && currentTrackIndex < currentPlaylist.tracks.length - 1) {
       setCurrentTrackIndex(prev => prev + 1);
@@ -431,9 +491,16 @@ export function RecommendationEngineProvider({ children }) {
   };
 
   const dislikeSong = (trackId) => {
-    setConsecutiveSkips(0); // Reset skips because this is an explicit action
+    setConsecutiveSkips(0);
     
-    // Reduce disliked genres
+    // Add to disliked, remove from liked
+    setDislikedTrackIds(prev => new Set([...prev, trackId]));
+    setLikedTrackIds(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(trackId);
+      return newSet;
+    });
+    
     const track = tracksData.find(t => t.id === trackId);
     if (track) {
       setUserProfile(prev => {
@@ -453,7 +520,6 @@ export function RecommendationEngineProvider({ children }) {
       impact: "Less songs like this"
     });
 
-    // Move to next track
     const currentPlaylist = playlists.find(p => p.id === currentPlaylistId);
     if (currentPlaylist && currentTrackIndex < currentPlaylist.tracks.length - 1) {
       setCurrentTrackIndex(prev => prev + 1);
@@ -467,7 +533,7 @@ export function RecommendationEngineProvider({ children }) {
       ...event
     };
     
-    setFeedbackTimeline(prev => [newEvent, ...prev].slice(0, 20)); // Keep last 20
+    setFeedbackTimeline(prev => [newEvent, ...prev].slice(0, 20));
   };
 
   const undoFeedbackEvent = (eventId) => {
@@ -477,7 +543,6 @@ export function RecommendationEngineProvider({ children }) {
       setUserProfile(prev => {
         const newState = { ...prev };
         
-        // Restore genre weights
         if (eventToUndo.restoreState.genreWeights) {
           newState.genreWeights = { 
             ...newState.genreWeights, 
@@ -485,7 +550,6 @@ export function RecommendationEngineProvider({ children }) {
           };
         }
         
-        // Restore exploration level
         if (eventToUndo.restoreState.explorationLevel !== undefined) {
           newState.explorationLevel = eventToUndo.restoreState.explorationLevel;
         }
@@ -504,8 +568,12 @@ export function RecommendationEngineProvider({ children }) {
   const resetAlgorithm = () => {
     localStorage.removeItem('musicRecc_userProfile');
     localStorage.removeItem('musicRecc_feedbackTimeline');
+    localStorage.removeItem('musicRecc_likedTracks');
+    localStorage.removeItem('musicRecc_dislikedTracks');
     setUserProfile(initialUserProfile);
     setFeedbackTimeline([]);
+    setLikedTrackIds(new Set());
+    setDislikedTrackIds(new Set());
     setConsecutiveSkips(0);
     toast.success("Algorithm Reset", {
       description: "All preferences and history have been cleared."
@@ -531,6 +599,8 @@ export function RecommendationEngineProvider({ children }) {
     currentPlaylistId,
     currentTrackIndex,
     feedbackTimeline,
+    likedTrackIds,
+    dislikedTrackIds,
     consecutiveSkips,
     isLoadingPreviews,
     updateGenreWeights,

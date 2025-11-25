@@ -1,6 +1,6 @@
-// iTunes Search API for 30-second previews and album artwork
-
 const ITUNES_API_BASE = 'https://itunes.apple.com/search';
+const CACHE_KEY = 'musicRecc_enrichedTracks';
+const CACHE_VERSION = 'v1';
 
 export async function fetchTrackPreview(trackName, artistName) {
   try {
@@ -29,7 +29,6 @@ export async function fetchTrackPreview(trackName, artistName) {
     
     return null;
   } catch (error) {
-    console.error(`Failed to fetch preview for "${trackName}" by ${artistName}:`, error);
     return null;
   }
 }
@@ -47,17 +46,61 @@ export async function enrichTrackWithPreview(track) {
   };
 }
 
-export async function enrichTracksWithPreviews(tracks, delayMs = 100) {
-  const enrichedTracks = [];
-  
-  for (const track of tracks) {
-    const enriched = await enrichTrackWithPreview(track);
-    enrichedTracks.push(enriched);
+function getCachedTracks() {
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (!cached) return null;
     
-    if (delayMs > 0 && enrichedTracks.length < tracks.length) {
-      await new Promise(resolve => setTimeout(resolve, delayMs));
+    const { version, data, timestamp } = JSON.parse(cached);
+    
+    const maxAge = 24 * 60 * 60 * 1000;
+    if (version !== CACHE_VERSION || Date.now() - timestamp > maxAge) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
     }
+    
+    return data;
+  } catch (e) {
+    localStorage.removeItem(CACHE_KEY);
+    return null;
   }
+}
+
+function setCachedTracks(tracks) {
+  try {
+    const cacheData = {
+      version: CACHE_VERSION,
+      timestamp: Date.now(),
+      data: tracks
+    };
+    localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+  } catch (e) {
+    // Cache write failed, continue without caching
+  }
+}
+
+async function fetchInBatches(tracks, batchSize = 5) {
+  const results = [];
+  
+  for (let i = 0; i < tracks.length; i += batchSize) {
+    const batch = tracks.slice(i, i + batchSize);
+    const batchResults = await Promise.all(
+      batch.map(track => enrichTrackWithPreview(track))
+    );
+    results.push(...batchResults);
+  }
+  
+  return results;
+}
+
+export async function enrichTracksWithPreviews(tracks) {
+  const cached = getCachedTracks();
+  if (cached && cached.length === tracks.length) {
+    return cached;
+  }
+  
+  const enrichedTracks = await fetchInBatches(tracks, 5);
+  setCachedTracks(enrichedTracks);
   
   return enrichedTracks;
 }

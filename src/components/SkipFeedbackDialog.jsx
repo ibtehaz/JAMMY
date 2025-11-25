@@ -31,6 +31,7 @@ export default function SkipFeedbackDialog({ isOpen, onClose, onSubmit }) {
             exit={{ opacity: 0 }}
             className="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 pointer-events-auto"
             onClick={onClose}
+            data-modal-backdrop="true"
           />
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
@@ -71,7 +72,7 @@ export default function SkipFeedbackDialog({ isOpen, onClose, onSubmit }) {
               <div className="p-4 border-t border-white/5 flex gap-3">
                 <button
                   onClick={onClose}
-                  className="flex-1 py-2.5 text-gray-500 hover:text-white text-sm font-medium rounded-xl hover:bg-white/5 transition-colors"
+                  className="flex-1 py-2.5 bg-white/5 text-white text-sm font-semibold rounded-xl hover:bg-white/10 transition-colors"
                 >
                   Dismiss
                 </button>

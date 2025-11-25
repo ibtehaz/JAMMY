@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Play, Pause, SkipForward, SkipBack, Heart, X, ThumbsDown, Info, ChevronUp, ListMusic } from 'lucide-react';
 import { useRecommendationEngine } from '../context/RecommendationEngineContext';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 import { toast } from 'sonner';
 
 function formatTime(seconds) {
@@ -9,6 +10,115 @@ function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
   return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function SwipeableAlbumArt({ track, onSwipeLeft, onSwipeRight }) {
+  const x = useMotionValue(0);
+  const containerRef = useRef(null);
+  
+  const rotate = useTransform(x, [-200, 0, 200], [-12, 0, 12]);
+  const scale = useTransform(x, [-200, 0, 200], [0.95, 1, 0.95]);
+  
+  const likeOpacity = useTransform(x, [0, 100], [0, 1]);
+  const nopeOpacity = useTransform(x, [-100, 0], [1, 0]);
+  
+  const greenGlow = useTransform(x, [0, 150], [0, 0.6]);
+  const redGlow = useTransform(x, [-150, 0], [0.6, 0]);
+
+  const handleDragEnd = (_, info) => {
+    const threshold = 100;
+    const velocity = 500;
+    
+    if (info.offset.x > threshold || info.velocity.x > velocity) {
+      animate(x, 250, { 
+        type: 'spring', 
+        stiffness: 400, 
+        damping: 30,
+        onComplete: () => {
+          onSwipeRight?.();
+          x.set(0);
+        }
+      });
+    } else if (info.offset.x < -threshold || info.velocity.x < -velocity) {
+      animate(x, -250, { 
+        type: 'spring', 
+        stiffness: 400, 
+        damping: 30,
+        onComplete: () => {
+          onSwipeLeft?.();
+          x.set(0);
+        }
+      });
+    } else {
+      animate(x, 0, { type: 'spring', stiffness: 500, damping: 35 });
+    }
+  };
+
+  useEffect(() => {
+    x.set(0);
+  }, [track?.id, x]);
+
+  return (
+    <div ref={containerRef} className="relative w-full max-w-[240px] mb-5">
+      <motion.div 
+        className="absolute inset-0 rounded-2xl bg-green-500/80 blur-3xl scale-90"
+        style={{ opacity: greenGlow }}
+      />
+      <motion.div 
+        className="absolute inset-0 rounded-2xl bg-red-500/80 blur-3xl scale-90"
+        style={{ opacity: redGlow }}
+      />
+      
+      <motion.div
+        style={{ x, rotate, scale }}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.7}
+        onDragEnd={handleDragEnd}
+        whileTap={{ cursor: 'grabbing' }}
+        className="relative aspect-square w-full cursor-grab active:cursor-grabbing"
+      >
+        <div className="w-full h-full bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 rounded-2xl shadow-2xl overflow-hidden">
+          {track?.artworkUrl ? (
+            <img 
+              src={track.artworkUrl} 
+              alt={`${track.title} album art`}
+              className="w-full h-full object-cover select-none"
+              draggable={false}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <span className="text-7xl opacity-30">🎵</span>
+            </div>
+          )}
+        </div>
+        
+        <motion.div 
+          style={{ opacity: likeOpacity }}
+          className="absolute top-4 right-4 px-4 py-2 bg-green-500 rounded-xl border-3 border-green-300 shadow-lg transform rotate-12"
+        >
+          <div className="flex items-center gap-2 text-white font-bold text-sm">
+            <Heart className="w-5 h-5 fill-current" />
+            <span>LIKE</span>
+          </div>
+        </motion.div>
+        
+        <motion.div 
+          style={{ opacity: nopeOpacity }}
+          className="absolute top-4 left-4 px-4 py-2 bg-red-500 rounded-xl border-3 border-red-300 shadow-lg transform -rotate-12"
+        >
+          <div className="flex items-center gap-2 text-white font-bold text-sm">
+            <ThumbsDown className="w-5 h-5" />
+            <span>NOPE</span>
+          </div>
+        </motion.div>
+      </motion.div>
+      
+      <p className="text-center text-[10px] text-gray-500 mt-3">
+        ← Swipe to react →
+      </p>
+    </div>
+  );
 }
 
 function ReasoningPill({ confidence, onClick }) {
@@ -25,14 +135,15 @@ function ReasoningPill({ confidence, onClick }) {
   );
 }
 
-function QueueDrawer({ isOpen, onClose, playlist, currentIndex, onPlayTrack }) {
-  // Get upcoming tracks with original indices
+function QueueDrawer({ isOpen, onClose, playlist, currentIndex, onPlayTrack, likedTrackIds, dislikedTrackIds }) {
   const allTracks = playlist?.tracks || [];
   const upcomingTracks = allTracks
     .map((t, i) => ({ ...t, originalIndex: i }))
     .slice(currentIndex + 1, currentIndex + 6);
 
-  return (
+  const phoneScreen = typeof document !== 'undefined' ? document.getElementById('phone-screen') : null;
+
+  const drawerContent = (
     <AnimatePresence>
       {isOpen && (
         <>
@@ -40,76 +151,120 @@ function QueueDrawer({ isOpen, onClose, playlist, currentIndex, onPlayTrack }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm z-20 rounded-3xl"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm z-[100]"
+            data-modal-backdrop="true"
           />
+          
           <motion.div
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute inset-x-0 bottom-0 glass rounded-t-3xl z-30 overflow-hidden"
+            transition={{ 
+              type: "spring", 
+              damping: 28, 
+              stiffness: 280,
+              mass: 0.8
+            }}
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.5 }}
+            onDragEnd={(_, info) => {
+              if (info.offset.y > 80 || info.velocity.y > 400) {
+                onClose();
+              }
+            }}
+            className="absolute inset-x-0 bottom-0 z-[101] rounded-t-3xl overflow-hidden"
+            style={{ maxHeight: '75%' }}
           >
-            {/* Drag handle */}
-            <div className="pt-3 pb-2">
-              <div className="w-10 h-1 bg-white/30 rounded-full mx-auto" />
-            </div>
+            <div 
+              className="absolute inset-0 bg-gradient-to-b from-[#1a1a1f] via-[#141418] to-[#0a0a0c] border-t border-white/[0.08]"
+              style={{ 
+                backdropFilter: 'blur(40px)',
+                WebkitBackdropFilter: 'blur(40px)',
+              }}
+            />
             
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 pb-3">
-              <h3 className="text-base font-semibold text-white flex items-center gap-2">
-                <ListMusic className="w-4 h-4 text-gray-400" />
-                Up Next
-              </h3>
-              <span className="text-[10px] text-gray-500">{upcomingTracks.length} tracks</span>
-            </div>
-            
-            {/* Track list */}
-            <div className="px-4 pb-6 space-y-1 max-h-[50vh] overflow-y-auto scrollbar-hide">
-              {upcomingTracks.length > 0 ? (
-                upcomingTracks.map((track, i) => (
-                  <button 
-                    key={track.id} 
-                    onClick={() => {
-                      if (typeof onPlayTrack === 'function') {
-                        onPlayTrack(track.originalIndex);
-                        onClose();
-                      }
-                    }}
-                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/5 w-full text-left transition-colors group"
-                  >
-                    <span className="text-gray-600 w-5 text-center text-xs font-medium">{i + 1}</span>
-                    <div className="w-11 h-11 rounded-lg bg-gray-800 overflow-hidden shrink-0">
-                      {track.artworkUrl100 ? (
-                        <img src={track.artworkUrl100} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <span className="text-lg opacity-30">🎵</span>
+            <div className="relative flex flex-col h-full">
+              <div className="pt-3 pb-3 cursor-grab active:cursor-grabbing">
+                <div className="w-9 h-[5px] bg-white/30 rounded-full mx-auto" />
+              </div>
+              
+              <div className="flex items-center justify-between px-5 pb-3">
+                <h3 className="text-[15px] font-semibold text-white flex items-center gap-2.5">
+                  <ListMusic className="w-[18px] h-[18px] text-gray-400" />
+                  Up Next
+                </h3>
+                <span className="text-xs text-gray-500 font-medium">{upcomingTracks.length} tracks</span>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto scrollbar-hide px-3">
+                <div className="space-y-0.5">
+                  {upcomingTracks.length > 0 ? (
+                    upcomingTracks.map((track, i) => (
+                      <motion.button 
+                        key={track.id}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.04, duration: 0.25 }}
+                        onClick={() => {
+                          if (typeof onPlayTrack === 'function') {
+                            onPlayTrack(track.originalIndex);
+                            onClose();
+                          }
+                        }}
+                        className="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-white/[0.04] active:bg-white/[0.08] w-full text-left transition-colors duration-150"
+                      >
+                        <span className="text-gray-500 w-5 text-center text-sm font-medium tabular-nums">{i + 1}</span>
+                        <div className="w-11 h-11 rounded-xl bg-gray-800/80 overflow-hidden shrink-0 shadow-md">
+                          {track.artworkUrl100 ? (
+                            <img src={track.artworkUrl100} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-800">
+                              <span className="text-lg opacity-30">🎵</span>
+                            </div>
+                          )}
                         </div>
-                      )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <p className="font-medium truncate text-[14px] text-white leading-tight">{track.title}</p>
+                            {likedTrackIds?.has(track.id) && (
+                              <Heart className="w-3 h-3 text-green-400 fill-green-400 shrink-0" />
+                            )}
+                            {dislikedTrackIds?.has(track.id) && (
+                              <ThumbsDown className="w-3 h-3 text-red-400 fill-red-400 shrink-0" />
+                            )}
+                          </div>
+                          <p className="text-[12px] text-gray-500 truncate mt-0.5">{track.artist}</p>
+                        </div>
+                        <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                          track.confidence >= 0.7 ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
+                        }`}>
+                          {Math.round(track.confidence * 100)}%
+                        </div>
+                      </motion.button>
+                    ))
+                  ) : (
+                    <div className="text-center py-10">
+                      <p className="text-gray-500 text-sm">End of playlist</p>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate text-sm text-white">{track.title}</p>
-                      <p className="text-xs text-gray-500 truncate">{track.artist}</p>
-                    </div>
-                    <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                      track.confidence >= 0.7 ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
-                    }`}>
-                      {Math.round(track.confidence * 100)}%
-                    </div>
-                  </button>
-                ))
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-gray-500 text-sm">End of playlist</p>
+                  )}
                 </div>
-              )}
+                
+                <div className="h-8" />
+              </div>
             </div>
           </motion.div>
         </>
       )}
     </AnimatePresence>
   );
+
+  if (phoneScreen) {
+    return createPortal(drawerContent, phoneScreen);
+  }
+  return drawerContent;
 }
 
 function ReasoningPanel({ track, isOpen, onClose }) {
@@ -123,6 +278,7 @@ function ReasoningPanel({ track, isOpen, onClose }) {
             exit={{ opacity: 0 }}
             onClick={onClose}
             className="absolute inset-0 bg-black/80 backdrop-blur-sm z-40"
+            data-modal-backdrop="true"
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -186,6 +342,7 @@ function ContextModal({ isOpen, onClose, onSubmit }) {
             exit={{ opacity: 0 }}
             onClick={onClose}
             className="absolute inset-0 bg-black/80 backdrop-blur-sm z-50"
+            data-modal-backdrop="true"
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -243,7 +400,7 @@ function ContextModal({ isOpen, onClose, onSubmit }) {
 }
 
 export default function NowPlaying() {
-  const { playlists, currentPlaylistId, currentTrackIndex, likeSong, dislikeSong, skipSong, playPreviousSong, playTrackAtIndex } = useRecommendationEngine();
+  const { playlists, currentPlaylistId, currentTrackIndex, likeSong, dislikeSong, skipSong, playPreviousSong, playTrackAtIndex, likedTrackIds, dislikedTrackIds } = useRecommendationEngine();
   const [isPlaying, setIsPlaying] = useState(false);
   const [showReasoning, setShowReasoning] = useState(false);
   const [showContextModal, setShowContextModal] = useState(false);
@@ -255,15 +412,25 @@ export default function NowPlaying() {
   const currentPlaylist = playlists.find(p => p.id === currentPlaylistId);
   const currentTrack = currentPlaylist?.tracks[currentTrackIndex];
 
+  // Use ref to access fresh playlist data in handleEnded without causing re-renders
+  const playlistsRef = useRef(playlists);
+  const currentTrackIndexRef = useRef(currentTrackIndex);
+  
+  useEffect(() => {
+    playlistsRef.current = playlists;
+  }, [playlists]);
+  
+  useEffect(() => {
+    currentTrackIndexRef.current = currentTrackIndex;
+  }, [currentTrackIndex]);
+
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !currentTrack?.previewUrl) return;
 
-    // Set new track
     audio.src = currentTrack.previewUrl;
     audio.load();
     
-    // Auto-play on track change
     const playPromise = audio.play();
     if (playPromise !== undefined) {
       playPromise
@@ -276,15 +443,15 @@ export default function NowPlaying() {
     setCurrentTime(0);
     setDuration(0);
 
-    // Event handlers
     const updateTime = () => setCurrentTime(audio.currentTime);
     const updateDuration = () => setDuration(audio.duration);
     const handleEnded = () => {
       setIsPlaying(false);
-      // Auto-advance to next track (without logging as skip)
-      const currentPlaylist = playlists.find(p => p.id === currentPlaylistId);
-      if (currentPlaylist && currentTrackIndex < currentPlaylist.tracks.length - 1) {
-        playTrackAtIndex(currentTrackIndex + 1);
+      const freshPlaylists = playlistsRef.current;
+      const freshIndex = currentTrackIndexRef.current;
+      const playlist = freshPlaylists.find(p => p.id === currentPlaylistId);
+      if (playlist && freshIndex < playlist.tracks.length - 1) {
+        playTrackAtIndex(freshIndex + 1);
       }
     };
 
@@ -292,15 +459,13 @@ export default function NowPlaying() {
     audio.addEventListener('loadedmetadata', updateDuration);
     audio.addEventListener('ended', handleEnded);
 
-    // Cleanup
     return () => {
       audio.removeEventListener('timeupdate', updateTime);
       audio.removeEventListener('loadedmetadata', updateDuration);
       audio.removeEventListener('ended', handleEnded);
     };
-  }, [currentTrack?.id, currentPlaylistId, currentTrackIndex, playlists, playTrackAtIndex]);
+  }, [currentTrack?.id, currentPlaylistId, playTrackAtIndex]);
 
-  // Toggle play/pause
   const togglePlayPause = async () => {
     if (!audioRef.current || !currentTrack?.previewUrl) {
       toast.error("No preview available for this track");
@@ -315,7 +480,6 @@ export default function NowPlaying() {
       }
       setIsPlaying(!isPlaying);
     } catch (error) {
-      console.error("Playback error:", error);
       toast.error("Failed to play audio");
     }
   };
@@ -356,27 +520,12 @@ export default function NowPlaying() {
       animate={{ opacity: 1 }}
       className="relative flex flex-col items-center"
     >
-      {/* Album Art */}
-      <motion.div 
-        className="w-full aspect-square max-w-[240px] bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 rounded-2xl shadow-2xl mb-5 relative overflow-hidden"
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 300, damping: 25 }}
-      >
-        {currentTrack.artworkUrl && (
-          <img 
-            src={currentTrack.artworkUrl} 
-            alt={`${currentTrack.title} album art`}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        )}
-        {/* Fallback - only visible if no artwork */}
-        {!currentTrack.artworkUrl && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-7xl opacity-30">🎵</div>
-          </div>
-        )}
-      </motion.div>
+      {/* Album Art with Swipe Gestures */}
+      <SwipeableAlbumArt 
+        track={currentTrack}
+        onSwipeRight={handleLike}
+        onSwipeLeft={handleDislike}
+      />
 
       {/* Track Info */}
       <div className="text-center mb-3 w-full px-2">
@@ -434,9 +583,13 @@ export default function NowPlaying() {
         <motion.button 
           whileTap={{ scale: 0.9 }} 
           onClick={handleDislike}
-          className="p-3 text-gray-400 hover:text-red-500 transition-colors"
+          className={`p-3 transition-colors ${
+            dislikedTrackIds.has(currentTrack.id) 
+              ? 'text-red-500' 
+              : 'text-gray-400 hover:text-red-500'
+          }`}
         >
-          <ThumbsDown className="w-5 h-5" />
+          <ThumbsDown className={`w-5 h-5 ${dislikedTrackIds.has(currentTrack.id) ? 'fill-current' : ''}`} />
         </motion.button>
 
         <motion.button 
@@ -472,9 +625,13 @@ export default function NowPlaying() {
         <motion.button 
           whileTap={{ scale: 0.9 }} 
           onClick={handleLike}
-          className="p-3 text-gray-400 hover:text-green-400 transition-colors"
+          className={`p-3 transition-colors ${
+            likedTrackIds.has(currentTrack.id) 
+              ? 'text-green-400' 
+              : 'text-gray-400 hover:text-green-400'
+          }`}
         >
-          <Heart className="w-5 h-5" />
+          <Heart className={`w-5 h-5 ${likedTrackIds.has(currentTrack.id) ? 'fill-current' : ''}`} />
         </motion.button>
       </div>
 
@@ -513,6 +670,8 @@ export default function NowPlaying() {
         playlist={currentPlaylist}
         currentIndex={currentTrackIndex}
         onPlayTrack={playTrackAtIndex}
+        likedTrackIds={likedTrackIds}
+        dislikedTrackIds={dislikedTrackIds}
       />
 
       {/* Hidden Audio Element */}

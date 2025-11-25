@@ -1,4 +1,4 @@
-import { X, Book, Dumbbell, Car, PartyPopper, Coffee, Moon } from 'lucide-react';
+import { X, Book, Dumbbell, Car, PartyPopper, Coffee, Moon, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -42,6 +42,8 @@ export default function ActivitySelectorModal({
   const handleClear = () => {
     setSelectedActivity(null);
     setSelectedMoods([]);
+    onApply(null, []);
+    onClose();
   };
 
   return (
@@ -54,6 +56,7 @@ export default function ActivitySelectorModal({
             exit={{ opacity: 0 }}
             onClick={onClose}
             className="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 pointer-events-auto"
+            data-modal-backdrop="true"
           />
           
           <motion.div
@@ -135,8 +138,9 @@ export default function ActivitySelectorModal({
               <div className="p-4 border-t border-white/5 flex gap-3">
                 <button
                   onClick={() => { handleClear(); onClose(); }}
-                  className="flex-1 py-2.5 text-gray-500 hover:text-white text-sm font-medium rounded-xl hover:bg-white/5 transition-colors"
+                  className="flex-1 py-2.5 bg-white/5 text-red-400 text-sm font-semibold rounded-xl hover:bg-white/10 transition-colors flex items-center justify-center gap-1.5"
                 >
+                  <RotateCcw className="w-3.5 h-3.5" />
                   Reset
                 </button>
                 <button
