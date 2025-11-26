@@ -4,22 +4,30 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function SkipFeedbackDialog({ isOpen, onClose, onSubmit }) {
   const [selectedReason, setSelectedReason] = useState(null);
+  const [customReason, setCustomReason] = useState('');
 
   const reasons = [
     "Too energetic / Too slow",
     "Wrong mood or context",
     "Don't like this artist",
-    "Just browsing"
+    "Just browsing",
+    "Other"
   ];
 
   const handleSubmit = () => {
-    if (selectedReason) {
+    if (selectedReason === "Other" && customReason.trim()) {
+      onSubmit(customReason.trim());
+      setSelectedReason(null);
+      setCustomReason('');
+    } else if (selectedReason && selectedReason !== "Other") {
       onSubmit(selectedReason);
       setSelectedReason(null);
     } else {
       onClose();
     }
   };
+
+  const canSubmit = selectedReason && (selectedReason !== "Other" || customReason.trim());
 
   return (
     <AnimatePresence>
@@ -66,6 +74,27 @@ export default function SkipFeedbackDialog({ isOpen, onClose, onSubmit }) {
                     {reason}
                   </button>
                 ))}
+                
+                {/* Custom text input for "Other" */}
+                <AnimatePresence>
+                  {selectedReason === "Other" && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <textarea
+                        value={customReason}
+                        onChange={(e) => setCustomReason(e.target.value)}
+                        placeholder="Tell us more about why you skipped..."
+                        className="w-full mt-2 p-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-gray-500 resize-none focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20"
+                        rows={3}
+                        autoFocus
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* Footer */}
@@ -78,7 +107,7 @@ export default function SkipFeedbackDialog({ isOpen, onClose, onSubmit }) {
                 </button>
                 <button
                   onClick={handleSubmit}
-                  disabled={!selectedReason}
+                  disabled={!canSubmit}
                   className="flex-1 py-2.5 bg-white text-black rounded-xl text-sm font-semibold disabled:opacity-50"
                 >
                   Fix My Mix
