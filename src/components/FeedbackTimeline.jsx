@@ -46,10 +46,15 @@ export default function FeedbackTimeline({ isOpen, onClose }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/70 z-[100]"
-            style={{ backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
+            className="absolute inset-0 bg-black/70 z-[100] will-change-opacity"
+            style={{ 
+              backdropFilter: "blur(8px)", 
+              WebkitBackdropFilter: "blur(8px)",
+              transform: "translateZ(0)",
+              WebkitTransform: "translateZ(0)"
+            }}
             data-modal-backdrop="true"
           />
           

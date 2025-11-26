@@ -35,7 +35,15 @@ function MiniPlayer() {
         onClick={handleClick}
         className="absolute bottom-[44px] left-3 right-3 z-30 cursor-pointer"
       >
-        <div className="bg-[#1a1a1f]/95 backdrop-blur-xl rounded-2xl p-2.5 flex items-center gap-3 border border-white/10 shadow-2xl">
+        <div 
+          className="bg-[#1a1a1f]/95 rounded-2xl p-2.5 flex items-center gap-3 border border-white/10 shadow-2xl"
+          style={{ 
+            backdropFilter: "blur(24px)", 
+            WebkitBackdropFilter: "blur(24px)",
+            transform: "translateZ(0)",
+            WebkitTransform: "translateZ(0)"
+          }}
+        >
           {/* Album Art */}
           <motion.div 
             layoutId="album-art"

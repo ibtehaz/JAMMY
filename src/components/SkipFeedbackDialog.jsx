@@ -45,9 +45,14 @@ export default function SkipFeedbackDialog({ isOpen, onClose, onSubmit }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute inset-0 bg-black/70 z-50 pointer-events-auto"
-            style={{ backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="absolute inset-0 bg-black/70 z-50 pointer-events-auto will-change-opacity"
+            style={{ 
+              backdropFilter: "blur(8px)", 
+              WebkitBackdropFilter: "blur(8px)",
+              transform: "translateZ(0)",
+              WebkitTransform: "translateZ(0)"
+            }}
             onClick={onClose}
             data-modal-backdrop="true"
           />

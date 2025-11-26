@@ -7,7 +7,7 @@ import FeedbackTimeline from './FeedbackTimeline';
 function Fader({ value, onChange, label, compact = false }) {
   const trackRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
-  const trackHeight = compact ? 32 : 70;
+  const trackHeight = compact ? 45 : 70;
   
   const handleInteraction = (clientY) => {
     if (!trackRef.current) return;
@@ -164,10 +164,15 @@ export default function TuningDeckModal({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/70 z-50 pointer-events-auto"
-            style={{ backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
+            className="absolute inset-0 bg-black/70 z-50 pointer-events-auto will-change-opacity"
+            style={{ 
+              backdropFilter: "blur(8px)", 
+              WebkitBackdropFilter: "blur(8px)",
+              transform: "translateZ(0)",
+              WebkitTransform: "translateZ(0)"
+            }}
             data-modal-backdrop="true"
           />
           
@@ -204,7 +209,7 @@ export default function TuningDeckModal({
                 </div>
               </div>
 
-              <div className="px-3 py-2 space-y-1">
+              <div className="px-4 py-3 space-y-3">
                 {/* Discovery Section */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
@@ -278,9 +283,9 @@ export default function TuningDeckModal({
 
                 {/* Genre Mix Section */}
                 <div>
-                  <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Genre Mix</h3>
+                  <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Genre Mix</h3>
                   
-                  <div className="flex flex-col gap-0">
+                  <div className="flex flex-col gap-1">
                     <div className="flex justify-between px-2">
                       {genres.slice(0, 4).map((genre) => (
                         <Fader
@@ -308,7 +313,7 @@ export default function TuningDeckModal({
               </div>
 
               {/* Footer */}
-              <div className="px-3 py-2 border-t border-white/5 flex gap-2">
+              <div className="px-4 py-3 border-t border-white/5 flex gap-2">
                 <button
                   onClick={() => {
                     if (window.confirm("Reset all preferences?")) {

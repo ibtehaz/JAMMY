@@ -60,14 +60,49 @@ body {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
+  /* Safari flicker fix */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .glass-hover:hover {
   background: var(--glass-hover);
 }
 
+/* Safari animation flicker fixes */
+[data-modal-backdrop="true"] {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  isolation: isolate;
+  contain: layout style paint;
+}
+
+/* Force GPU acceleration for animated elements */
+.gpu-accelerated {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+}
+
 button, a, input[type="range"] {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+
+/* Optimize transform transitions */
+.transition-transform {
+  will-change: transform;
+}
+
+/* Prevent layout thrashing during animations */
+.animate-in {
+  contain: layout style;
 }
 
 /* Range input styling */
