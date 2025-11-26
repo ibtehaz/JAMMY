@@ -1,6 +1,6 @@
 const ITUNES_API_BASE = 'https://itunes.apple.com/search';
 const CACHE_KEY = 'musicRecc_enrichedTracks';
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 
 export async function fetchTrackPreview(trackName, artistName) {
   try {
@@ -79,19 +79,25 @@ function setCachedTracks(tracks) {
   }
 }
 
-async function fetchInBatches(tracks, batchSize = 3) {
+async function fetchSequentially(tracks) {
   const results = [];
   
-  for (let i = 0; i < tracks.length; i += batchSize) {
-    const batch = tracks.slice(i, i + batchSize);
-    const batchResults = await Promise.all(
-      batch.map(track => enrichTrackWithPreview(track))
-    );
-    results.push(...batchResults);
+  for (const track of tracks) {
+    const enriched = await enrichTrackWithPreview(track);
+    results.push(enriched);
     
-    // Add delay between batches to avoid iTunes rate limiting
-    if (i + batchSize < tracks.length) {
-      await new Promise(resolve => setTimeout(resolve, 200));
+    // Small delay between each request to avoid rate limiting
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  
+  // Retry any tracks that failed to get previews
+  for (let i = 0; i < results.length; i++) {
+    if (!results[i].previewUrl) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const retried = await enrichTrackWithPreview(tracks[i]);
+      if (retried.previewUrl) {
+        results[i] = retried;
+      }
     }
   }
   
@@ -100,12 +106,22 @@ async function fetchInBatches(tracks, batchSize = 3) {
 
 export async function enrichTracksWithPreviews(tracks) {
   const cached = getCachedTracks();
+  
+  // Only use cache if ALL tracks have previews
   if (cached && cached.length === tracks.length) {
-    return cached;
+    const allHavePreviews = cached.every(t => t.previewUrl);
+    if (allHavePreviews) {
+      return cached;
+    }
   }
   
-  const enrichedTracks = await fetchInBatches(tracks, 5);
-  setCachedTracks(enrichedTracks);
+  const enrichedTracks = await fetchSequentially(tracks);
+  
+  // Only cache if most tracks have previews (allow some failures)
+  const previewCount = enrichedTracks.filter(t => t.previewUrl).length;
+  if (previewCount >= tracks.length * 0.9) {
+    setCachedTracks(enrichedTracks);
+  }
   
   return enrichedTracks;
 }
