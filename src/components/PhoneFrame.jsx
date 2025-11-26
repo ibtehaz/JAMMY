@@ -80,6 +80,9 @@ export default function PhoneFrame({ children }) {
               position="top-center"
               expand={false}
               richColors
+              visibleToasts={1}
+              offset={8}
+              gap={8}
               toastOptions={{
                 className: 'phone-toast',
                 style: {
@@ -88,8 +91,9 @@ export default function PhoneFrame({ children }) {
                   border: '1px solid rgba(255,255,255,0.1)',
                   color: 'white',
                   fontSize: '13px',
-                  padding: '12px 16px',
-                  borderRadius: '16px',
+                  padding: '10px 14px',
+                  borderRadius: '14px',
+                  maxWidth: '320px',
                 },
               }}
             />

@@ -1,5 +1,5 @@
 import { X, Book, Dumbbell, Car, PartyPopper, Coffee, Moon, RotateCcw } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ActivitySelectorModal({ 
@@ -11,6 +11,14 @@ export default function ActivitySelectorModal({
 }) {
   const [selectedActivity, setSelectedActivity] = useState(currentActivity);
   const [selectedMoods, setSelectedMoods] = useState(currentMoods || []);
+
+  // Sync state when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedActivity(currentActivity);
+      setSelectedMoods(currentMoods || []);
+    }
+  }, [isOpen, currentActivity, currentMoods]);
 
   const activities = [
     { id: "Study", icon: Book, color: "text-blue-400" },

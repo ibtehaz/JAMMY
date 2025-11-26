@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo } from 'react';
 // Note: useRef and useEffect are used by SwipeableAlbumArt and QueueDrawer
 import { createPortal } from 'react-dom';
 import { Play, Pause, Heart, ThumbsDown, SkipForward, ListMusic, Info, X } from 'lucide-react';
@@ -13,7 +13,7 @@ function formatTime(seconds) {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
-function SwipeableAlbumArt({ track, onSwipeLeft, onSwipeRight }) {
+const SwipeableAlbumArt = memo(function SwipeableAlbumArt({ track, onSwipeLeft, onSwipeRight }) {
   const x = useMotionValue(0);
   const containerRef = useRef(null);
   
@@ -33,8 +33,8 @@ function SwipeableAlbumArt({ track, onSwipeLeft, onSwipeRight }) {
     if (info.offset.x > threshold || info.velocity.x > velocity) {
       animate(x, 250, { 
         type: 'spring', 
-        stiffness: 400, 
-        damping: 30,
+        stiffness: 600, 
+        damping: 35,
         onComplete: () => {
           onSwipeRight?.();
           x.set(0);
@@ -43,15 +43,15 @@ function SwipeableAlbumArt({ track, onSwipeLeft, onSwipeRight }) {
     } else if (info.offset.x < -threshold || info.velocity.x < -velocity) {
       animate(x, -250, { 
         type: 'spring', 
-        stiffness: 400, 
-        damping: 30,
+        stiffness: 600, 
+        damping: 35,
         onComplete: () => {
           onSwipeLeft?.();
           x.set(0);
         }
       });
     } else {
-      animate(x, 0, { type: 'spring', stiffness: 500, damping: 35 });
+      animate(x, 0, { type: 'spring', stiffness: 700, damping: 40 });
     }
   };
 
@@ -120,9 +120,9 @@ function SwipeableAlbumArt({ track, onSwipeLeft, onSwipeRight }) {
       </p>
     </div>
   );
-}
+});
 
-function ReasoningPill({ confidence, onClick }) {
+const ReasoningPill = memo(function ReasoningPill({ confidence, onClick }) {
   return (
     <motion.button
       whileTap={{ scale: 0.98 }}
@@ -134,7 +134,7 @@ function ReasoningPill({ confidence, onClick }) {
       <Info className="w-3.5 h-3.5 text-gray-500" />
     </motion.button>
   );
-}
+});
 
 function QueueDrawer({ isOpen, onClose, playlist, currentIndex, onPlayTrack, likedTrackIds, dislikedTrackIds }) {
   const allTracks = playlist?.tracks || [];
@@ -439,7 +439,8 @@ export default function NowPlaying() {
       unlikeSong(currentTrack.id);
       toast("Removed from likes", {
         description: "We've updated your preferences",
-        icon: <Heart className="w-5 h-5 text-gray-400" />
+        icon: <Heart className="w-5 h-5 text-gray-400" />,
+        duration: 2000
       });
     } else {
       // Show context modal for new like
@@ -450,16 +451,19 @@ export default function NowPlaying() {
   const handleContextSubmit = (context) => {
     likeSong(currentTrack.id, context);
     toast.success("Added to your likes", {
-      description: context ? `We'll play more music for "${context}"` : "We'll play more music like this"
+      description: context ? `We'll play more music for "${context}"` : "We'll play more music like this",
+      duration: 2000
     });
     setShowContextModal(false);
   };
 
   const handleSkip = () => {
     skipSong(currentTrack.id);
+    toast.dismiss(); // Clear previous toasts for rapid skipping
     toast("Skipped", {
       description: "We'll play different songs",
       icon: <SkipForward className="w-5 h-5 text-gray-400" />,
+      duration: 1500
     });
   };
 
@@ -469,14 +473,16 @@ export default function NowPlaying() {
       undislikeSong(currentTrack.id);
       toast("Removed dislike", {
         description: "This song can appear again",
-        icon: <ThumbsDown className="w-5 h-5 text-gray-400" />
+        icon: <ThumbsDown className="w-5 h-5 text-gray-400" />,
+        duration: 2000
       });
     } else {
       // New dislike - skip to next
       dislikeSong(currentTrack.id);
       toast("Disliked", {
         description: "We'll show fewer songs like this",
-        icon: <ThumbsDown className="w-5 h-5 text-red-400" />
+        icon: <ThumbsDown className="w-5 h-5 text-red-400" />,
+        duration: 2000
       });
     }
   };
@@ -498,8 +504,9 @@ export default function NowPlaying() {
       <div className="text-center mb-3 w-full px-2">
         <motion.h2 
           key={currentTrack.title}
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.15 }}
           className="text-xl font-bold text-white truncate"
         >
           {currentTrack.title}
@@ -508,6 +515,7 @@ export default function NowPlaying() {
           key={currentTrack.artist}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
+          transition={{ duration: 0.12, delay: 0.05 }}
           className="text-sm text-gray-400 truncate"
         >
           {currentTrack.artist} • {currentTrack.album}
@@ -523,6 +531,10 @@ export default function NowPlaying() {
           <div 
             className="absolute top-0 left-0 h-full bg-white rounded-full pointer-events-none"
             style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+          />
+          <div 
+            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md pointer-events-none"
+            style={{ left: `calc(${duration ? (currentTime / duration) * 100 : 0}% - 6px)` }}
           />
           <input
             type="range"

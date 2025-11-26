@@ -32,9 +32,14 @@ const energyRanges = {
 function scoreTrack(track, userProfile, playlistContext = null) {
   let score = 0;
   
+  // Use context-specific weights if per-playlist learning is enabled and context exists
+  const weightsToUse = (userProfile.perPlaylistLearning && playlistContext && userProfile.contextGenreWeights[playlistContext])
+    ? userProfile.contextGenreWeights[playlistContext]
+    : userProfile.genreWeights;
+  
   const genreCount = track.genres.length || 1;
   const genreScore = track.genres.reduce((sum, g) => {
-    return sum + (userProfile.genreWeights[g] || 0);
+    return sum + (weightsToUse[g] || 0.5);
   }, 0) / genreCount;
   score += genreScore * 0.35;
   
@@ -207,10 +212,17 @@ const initialUserProfile = {
     country: 0.4,
     jazz: 0.3
   },
+  contextGenreWeights: {},
+  perPlaylistLearning: false,
   explorationLevel: 0.5,
   currentActivity: null,
   currentMoods: [],
   recentLikeContexts: []
+};
+
+const defaultGenreWeights = {
+  pop: 0.5, rock: 0.5, indie: 0.5, hiphop: 0.5,
+  edm: 0.5, rnb: 0.5, country: 0.5, jazz: 0.5
 };
 
 export function RecommendationEngineProvider({ children }) {
@@ -325,7 +337,7 @@ export function RecommendationEngineProvider({ children }) {
     }
     debounceTimerRef.current = setTimeout(() => {
       regeneratePlaylists();
-    }, 300);
+    }, 150);
   }, []);
 
   useEffect(() => {
@@ -438,6 +450,20 @@ export function RecommendationEngineProvider({ children }) {
     });
   };
 
+  const togglePerPlaylistLearning = () => {
+    const newValue = !userProfileRef.current.perPlaylistLearning;
+    
+    setUserProfile(prev => ({ ...prev, perPlaylistLearning: newValue }));
+    
+    logFeedback({
+      type: "setting_change",
+      details: { setting: "perPlaylistLearning", value: newValue },
+      impact: newValue 
+        ? "Learning separately for each activity" 
+        : "Learning globally across all playlists"
+    });
+  };
+
   const likeSong = (trackId, context = null) => {
     setConsecutiveSkips(0);
     
@@ -450,17 +476,44 @@ export function RecommendationEngineProvider({ children }) {
     
     const track = tracksData.find(t => t.id === trackId);
     if (track) {
+      // Get current playlist context for per-playlist learning
+      const currentPlaylist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
+      const playlistContext = currentPlaylist?.context;
+      
       setUserProfile(prev => {
+        const newLikeContexts = context 
+          ? [context, ...(prev.recentLikeContexts || [])].slice(0, 5)
+          : prev.recentLikeContexts;
+        
+        // Per-playlist learning: update context-specific weights
+        if (prev.perPlaylistLearning && playlistContext) {
+          const contextWeights = prev.contextGenreWeights[playlistContext] 
+            ? { ...prev.contextGenreWeights[playlistContext] }
+            : { ...defaultGenreWeights };
+          
+          track.genres.forEach(g => {
+            if (contextWeights[g] !== undefined) {
+              contextWeights[g] = Math.min(contextWeights[g] + 0.05, 1);
+            }
+          });
+          
+          return {
+            ...prev,
+            contextGenreWeights: {
+              ...prev.contextGenreWeights,
+              [playlistContext]: contextWeights
+            },
+            recentLikeContexts: newLikeContexts
+          };
+        }
+        
+        // Global learning: update global weights
         const newWeights = { ...prev.genreWeights };
         track.genres.forEach(g => {
           if (newWeights[g] !== undefined) {
             newWeights[g] = Math.min(newWeights[g] + 0.05, 1);
           }
         });
-        
-        const newLikeContexts = context 
-          ? [context, ...(prev.recentLikeContexts || [])].slice(0, 5)
-          : prev.recentLikeContexts;
 
         return { 
           ...prev, 
@@ -470,11 +523,18 @@ export function RecommendationEngineProvider({ children }) {
       });
     }
 
+    // Get context name for feedback message
+    const currentPlaylist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
+    const playlistContext = currentPlaylist?.context;
+    const isPerPlaylist = userProfileRef.current.perPlaylistLearning && playlistContext;
+
     logFeedback({
       type: "like",
       trackId,
-      details: { context },
-      impact: context ? `More songs like this for ${context.toLowerCase()}` : "More songs like this"
+      details: { context, perPlaylist: isPerPlaylist, playlistContext },
+      impact: isPerPlaylist 
+        ? `More songs like this for ${playlistContext}` 
+        : (context ? `More songs like this for ${context.toLowerCase()}` : "More songs like this")
     });
   };
 
@@ -487,7 +547,32 @@ export function RecommendationEngineProvider({ children }) {
     
     const track = tracksData.find(t => t.id === trackId);
     if (track) {
+      const currentPlaylist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
+      const playlistContext = currentPlaylist?.context;
+      
       setUserProfile(prev => {
+        // Per-playlist learning: update context-specific weights
+        if (prev.perPlaylistLearning && playlistContext) {
+          const contextWeights = prev.contextGenreWeights[playlistContext] 
+            ? { ...prev.contextGenreWeights[playlistContext] }
+            : { ...defaultGenreWeights };
+          
+          track.genres.forEach(g => {
+            if (contextWeights[g] !== undefined) {
+              contextWeights[g] = Math.max(contextWeights[g] - 0.05, 0);
+            }
+          });
+          
+          return {
+            ...prev,
+            contextGenreWeights: {
+              ...prev.contextGenreWeights,
+              [playlistContext]: contextWeights
+            }
+          };
+        }
+        
+        // Global learning
         const newWeights = { ...prev.genreWeights };
         track.genres.forEach(g => {
           if (newWeights[g] !== undefined) {
@@ -533,7 +618,32 @@ export function RecommendationEngineProvider({ children }) {
     
     const track = tracksData.find(t => t.id === trackId);
     if (track) {
+      const currentPlaylist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
+      const playlistContext = currentPlaylist?.context;
+      
       setUserProfile(prev => {
+        // Per-playlist learning: update context-specific weights
+        if (prev.perPlaylistLearning && playlistContext) {
+          const contextWeights = prev.contextGenreWeights[playlistContext] 
+            ? { ...prev.contextGenreWeights[playlistContext] }
+            : { ...defaultGenreWeights };
+          
+          track.genres.forEach(g => {
+            if (contextWeights[g] !== undefined) {
+              contextWeights[g] = Math.max(contextWeights[g] - 0.05, 0);
+            }
+          });
+          
+          return {
+            ...prev,
+            contextGenreWeights: {
+              ...prev.contextGenreWeights,
+              [playlistContext]: contextWeights
+            }
+          };
+        }
+        
+        // Global learning
         const newWeights = { ...prev.genreWeights };
         track.genres.forEach(g => {
           if (newWeights[g] !== undefined) {
@@ -565,7 +675,32 @@ export function RecommendationEngineProvider({ children }) {
     
     const track = tracksData.find(t => t.id === trackId);
     if (track) {
+      const currentPlaylist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
+      const playlistContext = currentPlaylist?.context;
+      
       setUserProfile(prev => {
+        // Per-playlist learning: update context-specific weights
+        if (prev.perPlaylistLearning && playlistContext) {
+          const contextWeights = prev.contextGenreWeights[playlistContext] 
+            ? { ...prev.contextGenreWeights[playlistContext] }
+            : { ...defaultGenreWeights };
+          
+          track.genres.forEach(g => {
+            if (contextWeights[g] !== undefined) {
+              contextWeights[g] = Math.min(contextWeights[g] + 0.05, 1);
+            }
+          });
+          
+          return {
+            ...prev,
+            contextGenreWeights: {
+              ...prev.contextGenreWeights,
+              [playlistContext]: contextWeights
+            }
+          };
+        }
+        
+        // Global learning
         const newWeights = { ...prev.genreWeights };
         track.genres.forEach(g => {
           if (newWeights[g] !== undefined) {
@@ -615,7 +750,8 @@ export function RecommendationEngineProvider({ children }) {
       });
       
       toast.info("Undid Changes", {
-        description: "Your preferences have been restored."
+        description: "Your preferences have been restored.",
+        duration: 2000
       });
     }
 
@@ -633,7 +769,8 @@ export function RecommendationEngineProvider({ children }) {
     setDislikedTrackIds(new Set());
     setConsecutiveSkips(0);
     toast.success("Algorithm Reset", {
-      description: "All preferences and history have been cleared."
+      description: "All preferences and history have been cleared.",
+      duration: 2000
     });
   };
 
@@ -641,10 +778,6 @@ export function RecommendationEngineProvider({ children }) {
     setCurrentPlaylistId(playlistId);
     setCurrentTrackIndex(0);
   }, []);
-
-  const playPreviousSong = () => {
-    setCurrentTrackIndex(prev => Math.max(0, prev - 1));
-  };
 
   const playTrackAtIndex = useCallback((index) => {
     setCurrentTrackIndex(prev => index >= 0 ? index : prev);
@@ -748,6 +881,7 @@ export function RecommendationEngineProvider({ children }) {
     setActivity,
     setMoods,
     toggleMood,
+    togglePerPlaylistLearning,
     likeSong,
     unlikeSong,
     dislikeSong,
@@ -756,7 +890,6 @@ export function RecommendationEngineProvider({ children }) {
     undoFeedbackEvent,
     resetAlgorithm,
     playPlaylist,
-    playPreviousSong,
     playTrackAtIndex,
     regeneratePlaylists,
     logFeedback,

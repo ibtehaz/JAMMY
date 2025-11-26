@@ -1,10 +1,11 @@
+import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Play, Pause } from 'lucide-react';
 import { useRecommendationEngine } from '../context/RecommendationEngineContext';
 
-export default function MiniPlayer() {
+function MiniPlayer() {
   const navigate = useNavigate();
   const { playlists, currentPlaylistId, likedTrackIds, isPlaying, togglePlayPause, currentTrack } = useRecommendationEngine();
 
@@ -30,7 +31,7 @@ export default function MiniPlayer() {
         initial={{ y: 80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 80, opacity: 0 }}
-        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        transition={{ type: "spring", stiffness: 500, damping: 35 }}
         onClick={handleClick}
         className="absolute bottom-[44px] left-3 right-3 z-30 cursor-pointer"
       >
@@ -92,3 +93,5 @@ export default function MiniPlayer() {
 
   return miniPlayerContent;
 }
+
+export default memo(MiniPlayer);

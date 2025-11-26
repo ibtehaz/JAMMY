@@ -1,10 +1,18 @@
 import { AlertCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function SkipFeedbackDialog({ isOpen, onClose, onSubmit }) {
   const [selectedReason, setSelectedReason] = useState(null);
   const [customReason, setCustomReason] = useState('');
+
+  // Reset state when dialog opens
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedReason(null);
+      setCustomReason('');
+    }
+  }, [isOpen]);
 
   const reasons = [
     "Too energetic / Too slow",

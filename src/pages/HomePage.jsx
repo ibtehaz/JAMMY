@@ -4,7 +4,7 @@ import { useRecommendationEngine } from '../context/RecommendationEngineContext'
 import LoadingSpinner from '../components/LoadingSpinner';
 import MiniPlayer from '../components/MiniPlayer';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 
 const playlistConfig = {
   morning: { 
@@ -44,7 +44,7 @@ const playlistConfig = {
   }
 };
 
-function HeroPlaylistCard({ playlist, activity }) {
+const HeroPlaylistCard = memo(function HeroPlaylistCard({ playlist, activity }) {
   const { gradient, icon: Icon } = playlistConfig[playlist.id] || { 
     gradient: "from-gray-700 to-gray-900", 
     icon: Music 
@@ -55,7 +55,7 @@ function HeroPlaylistCard({ playlist, activity }) {
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: "auto" }}
       exit={{ opacity: 0, height: 0 }}
-      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+      transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
       className="overflow-hidden"
     >
       <Link 
@@ -94,9 +94,9 @@ function HeroPlaylistCard({ playlist, activity }) {
       </Link>
     </motion.div>
   );
-}
+});
 
-function PlaylistCard({ playlist, index, isHidden }) {
+const PlaylistCard = memo(function PlaylistCard({ playlist, index, isHidden }) {
   const timeAgo = () => {
     const seconds = Math.floor((Date.now() - playlist.generatedAt) / 1000);
     if (seconds < 60) return 'Just now';
@@ -113,7 +113,7 @@ function PlaylistCard({ playlist, index, isHidden }) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: isHidden ? 0 : 1 }}
-      transition={{ duration: 0.2, delay: index * 0.03 }}
+      transition={{ duration: 0.15, delay: index * 0.02 }}
     >
       <Link 
         to={`/playlist/${playlist.id}`}
@@ -146,9 +146,9 @@ function PlaylistCard({ playlist, index, isHidden }) {
       </Link>
     </motion.div>
   );
-}
+});
 
-function ActivityChip({ activity, moods, onClick }) {
+const ActivityChip = memo(function ActivityChip({ activity, moods, onClick }) {
   const hasContext = activity || (moods && moods.length > 0);
 
   const getActivityIcon = (act) => {
@@ -194,7 +194,7 @@ function ActivityChip({ activity, moods, onClick }) {
       )}
     </motion.button>
   );
-}
+});
 
 function getGreeting() {
   const hour = new Date().getHours();

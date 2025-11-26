@@ -7,7 +7,7 @@ import FeedbackTimeline from './FeedbackTimeline';
 function Fader({ value, onChange, label, compact = false }) {
   const trackRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
-  const trackHeight = compact ? 50 : 70;
+  const trackHeight = compact ? 32 : 70;
   
   const handleInteraction = (clientY) => {
     if (!trackRef.current) return;
@@ -96,18 +96,12 @@ function Fader({ value, onChange, label, compact = false }) {
       </div>
 
       <div className="text-center">
-        <div className={`${compact ? 'text-[7px]' : 'text-[8px]'} font-medium uppercase tracking-wider text-white/40 truncate ${compact ? 'max-w-[52px]' : 'max-w-[60px]'}`}>
+        <div className={`${compact ? 'text-[6px]' : 'text-[8px]'} font-medium uppercase tracking-wider text-white/40 truncate ${compact ? 'max-w-[52px]' : 'max-w-[60px]'}`}>
           {label}
         </div>
-        <motion.div 
-          className={`${compact ? 'text-[10px]' : 'text-xs'} font-semibold text-white/90 tabular-nums`}
-          key={Math.round(value * 100)}
-          initial={{ scale: 1.1, opacity: 0.5 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.15 }}
-        >
+        <div className={`${compact ? 'text-[9px]' : 'text-xs'} font-semibold text-white/90 tabular-nums`}>
           {Math.round(value * 100)}
-        </motion.div>
+        </div>
       </div>
     </div>
   );
@@ -119,7 +113,8 @@ export default function TuningDeckModal({
   userProfile,
   updateGenreWeights,
   setExplorationLevel,
-  resetAlgorithm
+  resetAlgorithm,
+  togglePerPlaylistLearning
 }) {
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
@@ -154,7 +149,7 @@ export default function TuningDeckModal({
     if (hasChanges) updateGenreWeights(changedWeights);
     if (tempExplorationLevel !== userProfile.explorationLevel) setExplorationLevel(tempExplorationLevel);
 
-    toast.success("Settings Applied", { description: "Your playlists have been updated." });
+    toast.success("Settings Applied", { description: "Your playlists have been updated.", duration: 2000 });
     setIsApplying(false);
     onClose();
   };
@@ -178,10 +173,10 @@ export default function TuningDeckModal({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="absolute inset-0 flex items-center justify-center z-[51] pointer-events-none p-4"
+            className="absolute inset-0 flex items-center justify-center z-[51] pointer-events-none p-3"
           >
             <div 
-              className="glass rounded-2xl w-full shadow-2xl pointer-events-auto max-h-[90%] overflow-y-auto scrollbar-hide"
+              className="glass rounded-2xl w-full shadow-2xl pointer-events-auto"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
@@ -206,10 +201,10 @@ export default function TuningDeckModal({
                 </div>
               </div>
 
-              <div className="p-3 space-y-3">
+              <div className="px-3 py-2 space-y-1">
                 {/* Discovery Section */}
                 <div>
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center justify-between mb-2">
                     <div>
                       <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Discovery Level</h3>
                     </div>
@@ -242,11 +237,36 @@ export default function TuningDeckModal({
                   </div>
                 </div>
 
+                {/* Per-Playlist Learning Toggle */}
+                <div className="flex items-center justify-between py-1.5 border-t border-b border-white/5">
+                  <div>
+                    <h3 className="text-sm font-medium text-white">Learn per activity</h3>
+                    <p className="text-[10px] text-gray-500 mt-0.5">
+                      {userProfile.perPlaylistLearning 
+                        ? "Genre preferences adjust separately for each playlist type"
+                        : "Your feedback affects all playlists equally"
+                      }
+                    </p>
+                  </div>
+                  <button
+                    onClick={togglePerPlaylistLearning}
+                    className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${
+                      userProfile.perPlaylistLearning ? 'bg-green-500' : 'bg-white/20'
+                    }`}
+                  >
+                    <motion.div
+                      className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-md"
+                      animate={{ x: userProfile.perPlaylistLearning ? 20 : 0 }}
+                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    />
+                  </button>
+                </div>
+
                 {/* Genre Mix Section */}
                 <div>
-                  <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Genre Mix</h3>
+                  <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Genre Mix</h3>
                   
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-0">
                     <div className="flex justify-between px-2">
                       {genres.slice(0, 4).map((genre) => (
                         <Fader
@@ -274,7 +294,7 @@ export default function TuningDeckModal({
               </div>
 
               {/* Footer */}
-              <div className="p-3 border-t border-white/5 flex gap-3">
+              <div className="px-3 py-2 border-t border-white/5 flex gap-2">
                 <button
                   onClick={() => {
                     if (window.confirm("Reset all preferences?")) {

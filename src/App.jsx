@@ -33,6 +33,7 @@ function TuningModalManager() {
     updateGenreWeights, 
     setExplorationLevel, 
     resetAlgorithm,
+    togglePerPlaylistLearning,
     isTuningModalOpen, 
     setIsTuningModalOpen 
   } = useRecommendationEngine();
@@ -45,6 +46,7 @@ function TuningModalManager() {
       updateGenreWeights={updateGenreWeights}
       setExplorationLevel={setExplorationLevel}
       resetAlgorithm={resetAlgorithm}
+      togglePerPlaylistLearning={togglePerPlaylistLearning}
     />
   );
 }
