@@ -4,714 +4,1438 @@
     "title": "Midnight Rain",
     "artist": "Taylor Swift",
     "album": "Midnights",
-    "genres": ["pop", "indie"],
+    "genres": [
+      "pop",
+      "indie"
+    ],
     "energy": 0.6,
     "familiarity": 0.9,
-    "moods": ["Melancholy", "Calm"],
-    "contexts": ["Chill", "Study"],
+    "moods": [
+      "Melancholy",
+      "Calm"
+    ],
+    "contexts": [
+      "Chill",
+      "Study"
+    ],
     "year": 2022,
-    "similarTo": []
+    "similarTo": [],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/a1/7a/ce/a17acefc-4904-d83d-bc22-ea19f29e4045/mzaf_183189634597321087.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/3d/01/f2/3d01f2e5-5a08-835f-3d30-d031720b2b80/22UM1IM07364.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/3d/01/f2/3d01f2e5-5a08-835f-3d30-d031720b2b80/22UM1IM07364.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t2",
     "title": "Thunderstruck",
     "artist": "AC/DC",
     "album": "The Razors Edge",
-    "genres": ["rock"],
+    "genres": [
+      "rock"
+    ],
     "energy": 0.95,
     "familiarity": 0.85,
-    "moods": ["Energetic", "Happy"],
-    "contexts": ["Workout", "Party"],
+    "moods": [
+      "Energetic",
+      "Happy"
+    ],
+    "contexts": [
+      "Workout",
+      "Party"
+    ],
     "year": 1990,
-    "similarTo": []
+    "similarTo": [],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/a0/fb/99/a0fb995a-6e93-c67b-846b-8c81a54748c9/mzaf_2311271038340188410.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Features125/v4/bb/a2/f0/bba2f0d7-4d9e-c617-d49e-3ae02fd5d440/dj.xbkfgllk.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Features125/v4/bb/a2/f0/bba2f0d7-4d9e-c617-d49e-3ae02fd5d440/dj.xbkfgllk.jpg/100x100bb.jpg"
   },
   {
     "id": "t3",
     "title": "Blinding Lights",
     "artist": "The Weeknd",
     "album": "After Hours",
-    "genres": ["pop", "edm"],
+    "genres": [
+      "pop",
+      "edm"
+    ],
     "energy": 0.8,
     "familiarity": 0.95,
-    "moods": ["Energetic", "Happy"],
-    "contexts": ["Commute", "Party"],
+    "moods": [
+      "Energetic",
+      "Happy"
+    ],
+    "contexts": [
+      "Commute",
+      "Party"
+    ],
     "year": 2019,
-    "similarTo": []
+    "similarTo": [],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d6/87/41/d687410c-4714-af1d-e055-3296d4777226/mzaf_16921438337215363475.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a6/6e/bf/a66ebf79-5008-8948-b352-a790fc87446b/19UM1IM04638.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a6/6e/bf/a66ebf79-5008-8948-b352-a790fc87446b/19UM1IM04638.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t4",
     "title": "Clair de Lune",
     "artist": "Claude Debussy",
     "album": "Suite bergamasque",
-    "genres": ["jazz"],
+    "genres": [
+      "jazz"
+    ],
     "energy": 0.2,
     "familiarity": 0.6,
-    "moods": ["Calm", "Focus"],
-    "contexts": ["Study", "Chill", "Sleep"],
+    "moods": [
+      "Calm",
+      "Focus"
+    ],
+    "contexts": [
+      "Study",
+      "Chill",
+      "Sleep"
+    ],
     "year": 1905,
-    "similarTo": []
+    "similarTo": [],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/c3/68/35/c36835b6-9cb3-a20a-088b-6c7d39e39636/mzaf_484141242926915999.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music/5f/f2/dc/mzi.cjpwuohz.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music/5f/f2/dc/mzi.cjpwuohz.jpg/100x100bb.jpg"
   },
   {
     "id": "t5",
     "title": "Lose Yourself",
     "artist": "Eminem",
     "album": "8 Mile Soundtrack",
-    "genres": ["hiphop"],
+    "genres": [
+      "hiphop"
+    ],
     "energy": 0.9,
     "familiarity": 0.9,
-    "moods": ["Energetic", "Motivational"],
-    "contexts": ["Workout", "Commute"],
+    "moods": [
+      "Energetic",
+      "Motivational"
+    ],
+    "contexts": [
+      "Workout",
+      "Commute"
+    ],
     "year": 2002,
-    "similarTo": []
+    "similarTo": [],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/62/0a/a5/620aa56f-189e-708a-80f0-cebdada3872e/mzaf_7131619873177773332.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/08/23/fc/0823fcd9-cb44-695b-32bf-b3bf51d9f800/00606949351229.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/08/23/fc/0823fcd9-cb44-695b-32bf-b3bf51d9f800/00606949351229.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t6",
     "title": "So What",
     "artist": "Miles Davis",
     "album": "Kind of Blue",
-    "genres": ["jazz"],
+    "genres": [
+      "jazz"
+    ],
     "energy": 0.3,
     "familiarity": 0.5,
-    "moods": ["Calm", "Focus"],
-    "contexts": ["Study", "Chill", "Sleep"],
+    "moods": [
+      "Calm",
+      "Focus"
+    ],
+    "contexts": [
+      "Study",
+      "Chill",
+      "Sleep"
+    ],
     "year": 1959,
-    "similarTo": []
+    "similarTo": [],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/9e/4d/df/9e4ddf83-c750-4892-4010-26e5286a38c7/mzaf_2873652449231945721.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music/7f/9f/d6/mzi.vtnaewef.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music/7f/9f/d6/mzi.vtnaewef.jpg/100x100bb.jpg"
   },
   {
     "id": "t7",
     "title": "Strobe",
     "artist": "Deadmau5",
     "album": "For Lack of a Better Name",
-    "genres": ["edm"],
+    "genres": [
+      "edm"
+    ],
     "energy": 0.45,
     "familiarity": 0.4,
-    "moods": ["Focus", "Calm"],
-    "contexts": ["Study", "Chill"],
+    "moods": [
+      "Focus",
+      "Calm"
+    ],
+    "contexts": [
+      "Study",
+      "Chill"
+    ],
     "year": 2009,
-    "similarTo": []
+    "similarTo": [],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/3a/bc/73/3abc7362-92b8-cce4-412a-c92b0a95a8ad/mzaf_10728912924886699624.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/4a/53/5d/4a535d3e-4d70-9bd9-4ef5-40016b6661ef/617465240959.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/4a/53/5d/4a535d3e-4d70-9bd9-4ef5-40016b6661ef/617465240959.jpg/100x100bb.jpg"
   },
   {
     "id": "t8",
     "title": "Wagon Wheel",
     "artist": "Darius Rucker",
     "album": "Learn to Live",
-    "genres": ["country"],
+    "genres": [
+      "country"
+    ],
     "energy": 0.65,
     "familiarity": 0.75,
-    "moods": ["Happy", "Energetic"],
-    "contexts": ["Commute"],
+    "moods": [
+      "Happy",
+      "Energetic"
+    ],
+    "contexts": [
+      "Commute"
+    ],
     "year": 2008,
-    "similarTo": []
+    "similarTo": [],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/e2/09/fd/e209fd97-1aef-c3a8-0222-4352482290b2/mzaf_7901227878517900957.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/85/67/71/856771e4-7058-c00f-a42b-3f10b8394a1c/19UMGIM53422.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/85/67/71/856771e4-7058-c00f-a42b-3f10b8394a1c/19UMGIM53422.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t9",
     "title": "Ivy",
     "artist": "Frank Ocean",
     "album": "Blonde",
-    "genres": ["indie", "rnb"],
+    "genres": [
+      "indie",
+      "rnb"
+    ],
     "energy": 0.25,
     "familiarity": 0.7,
-    "moods": ["Melancholy", "Romantic"],
-    "contexts": ["Chill", "Sleep"],
+    "moods": [
+      "Melancholy",
+      "Romantic"
+    ],
+    "contexts": [
+      "Chill",
+      "Sleep"
+    ],
     "year": 2016,
-    "similarTo": []
+    "similarTo": [],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ba/cc/4d/bacc4dda-b762-0c0a-5ef0-6c2fad1bdb5c/mzaf_8909701195572310967.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/bb/45/68/bb4568f3-68cd-619d-fbcb-4e179916545d/BlondCover-Final.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/bb/45/68/bb4568f3-68cd-619d-fbcb-4e179916545d/BlondCover-Final.jpg/100x100bb.jpg"
   },
   {
     "id": "t10",
     "title": "Seven Nation Army",
     "artist": "The White Stripes",
     "album": "Elephant",
-    "genres": ["rock", "indie"],
+    "genres": [
+      "rock",
+      "indie"
+    ],
     "energy": 0.85,
     "familiarity": 0.95,
-    "moods": ["Energetic"],
-    "contexts": ["Workout", "Party"],
+    "moods": [
+      "Energetic"
+    ],
+    "contexts": [
+      "Workout",
+      "Party"
+    ],
     "year": 2003,
-    "similarTo": ["t2"]
+    "similarTo": [
+      "t2"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/61/54/97/61549744-a83b-1c4d-58cf-e56b36beb4a7/mzaf_1246579179619940831.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/07/25/09/0725098a-09f4-f240-e551-94384a590371/886448799009.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/07/25/09/0725098a-09f4-f240-e551-94384a590371/886448799009.jpg/100x100bb.jpg"
   },
   {
     "id": "t11",
     "title": "Redbone",
     "artist": "Childish Gambino",
     "album": "Awaken, My Love!",
-    "genres": ["rnb"],
+    "genres": [
+      "rnb"
+    ],
     "energy": 0.5,
     "familiarity": 0.8,
-    "moods": ["Calm", "Happy"],
-    "contexts": ["Chill"],
+    "moods": [
+      "Calm",
+      "Happy"
+    ],
+    "contexts": [
+      "Chill"
+    ],
     "year": 2016,
-    "similarTo": []
+    "similarTo": [],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/86/8f/fd/868ffd10-ec33-726c-af20-ad3ee84a2fd1/mzaf_11660169861219990156.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/60/b5/6d/60b56d6e-be3e-fd6c-32df-62ed9fa44c6a/1a2284a9-39d0-4db5-a511-457834a732be.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/60/b5/6d/60b56d6e-be3e-fd6c-32df-62ed9fa44c6a/1a2284a9-39d0-4db5-a511-457834a732be.jpg/100x100bb.jpg"
   },
   {
     "id": "t12",
     "title": "Stairway to Heaven",
     "artist": "Led Zeppelin",
     "album": "Led Zeppelin IV",
-    "genres": ["rock"],
+    "genres": [
+      "rock"
+    ],
     "energy": 0.7,
     "familiarity": 0.9,
-    "moods": ["Epic", "Nostalgic"],
-    "contexts": ["Chill", "Commute"],
+    "moods": [
+      "Epic",
+      "Nostalgic"
+    ],
+    "contexts": [
+      "Chill",
+      "Commute"
+    ],
     "year": 1971,
-    "similarTo": []
+    "similarTo": [],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/60/61/5f/60615fd1-7425-78b3-21ab-fed7411a89ea/mzaf_7178841208140363975.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/5c/15/9b/5c159b27-95ca-b9a7-84e3-28e795fffd39/dj.kvkrpptq.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/5c/15/9b/5c159b27-95ca-b9a7-84e3-28e795fffd39/dj.kvkrpptq.jpg/100x100bb.jpg"
   },
   {
     "id": "t13",
     "title": "Levitating",
     "artist": "Dua Lipa",
     "album": "Future Nostalgia",
-    "genres": ["pop", "edm"],
+    "genres": [
+      "pop",
+      "edm"
+    ],
     "energy": 0.85,
     "familiarity": 0.95,
-    "moods": ["Energetic", "Happy"],
-    "contexts": ["Party", "Workout"],
+    "moods": [
+      "Energetic",
+      "Happy"
+    ],
+    "contexts": [
+      "Party",
+      "Workout"
+    ],
     "year": 2020,
-    "similarTo": ["t3"]
+    "similarTo": [
+      "t3"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/50/fb/2a/50fb2a1f-fa8f-fd33-893c-52502dc4573f/mzaf_5452381426075756565.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/6c/11/d6/6c11d681-aa3a-d59e-4c2e-f77e181026ab/190295092665.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/6c/11/d6/6c11d681-aa3a-d59e-4c2e-f77e181026ab/190295092665.jpg/100x100bb.jpg"
   },
   {
     "id": "t14",
     "title": "Take Five",
     "artist": "Dave Brubeck",
     "album": "Time Out",
-    "genres": ["jazz"],
+    "genres": [
+      "jazz"
+    ],
     "energy": 0.45,
     "familiarity": 0.55,
-    "moods": ["Calm", "Focus"],
-    "contexts": ["Study", "Chill"],
+    "moods": [
+      "Calm",
+      "Focus"
+    ],
+    "contexts": [
+      "Study",
+      "Chill"
+    ],
     "year": 1959,
-    "similarTo": ["t6"]
+    "similarTo": [
+      "t6"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/cc/49/99/cc4999b7-b550-cf81-af69-a4c63475fc71/mzaf_10897310118931669841.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/c3/32/c0/c332c05b-d589-c64f-7ba4-c3633fe75e3f/mzi.uusqmfyq.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/c3/32/c0/c332c05b-d589-c64f-7ba4-c3633fe75e3f/mzi.uusqmfyq.jpg/100x100bb.jpg"
   },
   {
     "id": "t15",
     "title": "One More Time",
     "artist": "Daft Punk",
     "album": "Discovery",
-    "genres": ["edm", "pop"],
+    "genres": [
+      "edm",
+      "pop"
+    ],
     "energy": 0.9,
     "familiarity": 0.85,
-    "moods": ["Energetic", "Happy"],
-    "contexts": ["Party", "Workout"],
+    "moods": [
+      "Energetic",
+      "Happy"
+    ],
+    "contexts": [
+      "Party",
+      "Workout"
+    ],
     "year": 2000,
-    "similarTo": []
+    "similarTo": [],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/98/96/f6/9896f638-8b47-3f76-c47e-19e43b53677c/mzaf_15900001332254520801.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/fd/4a/77/fd4a77db-0ebc-d043-41a2-f32fa1bb0fb4/dj.qrikkdwj.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/fd/4a/77/fd4a77db-0ebc-d043-41a2-f32fa1bb0fb4/dj.qrikkdwj.jpg/100x100bb.jpg"
   },
   {
     "id": "t16",
     "title": "Jolene",
     "artist": "Dolly Parton",
     "album": "Jolene",
-    "genres": ["country"],
+    "genres": [
+      "country"
+    ],
     "energy": 0.5,
     "familiarity": 0.8,
-    "moods": ["Melancholy", "Nostalgic"],
-    "contexts": ["Chill", "Commute"],
+    "moods": [
+      "Melancholy",
+      "Nostalgic"
+    ],
+    "contexts": [
+      "Chill",
+      "Commute"
+    ],
     "year": 1973,
-    "similarTo": []
+    "similarTo": [],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/43/ef/95/43ef956b-4a1c-8ab1-a843-4ac691dc45d9/mzaf_17631698820105622615.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/0b/f8/1e/0bf81e88-de6e-aba3-9fd4-e7407bfbcc31/886445438048.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/0b/f8/1e/0bf81e88-de6e-aba3-9fd4-e7407bfbcc31/886445438048.jpg/100x100bb.jpg"
   },
   {
     "id": "t17",
     "title": "Electric Feel",
     "artist": "MGMT",
     "album": "Oracular Spectacular",
-    "genres": ["indie", "edm"],
+    "genres": [
+      "indie",
+      "edm"
+    ],
     "energy": 0.75,
     "familiarity": 0.7,
-    "moods": ["Energetic", "Happy"],
-    "contexts": ["Party", "Commute"],
+    "moods": [
+      "Energetic",
+      "Happy"
+    ],
+    "contexts": [
+      "Party",
+      "Commute"
+    ],
     "year": 2007,
-    "similarTo": []
+    "similarTo": [],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/83/a5/7e/83a57e52-79bd-f796-d9e7-d5cf404a2835/mzaf_13882267521312882002.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/66/d8/08/66d808c0-24c9-9223-5692-7e4759ab207d/196871101424.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/66/d8/08/66d808c0-24c9-9223-5692-7e4759ab207d/196871101424.jpg/100x100bb.jpg"
   },
   {
     "id": "t18",
     "title": "The Less I Know The Better",
     "artist": "Tame Impala",
     "album": "Currents",
-    "genres": ["indie", "rock"],
+    "genres": [
+      "indie",
+      "rock"
+    ],
     "energy": 0.65,
     "familiarity": 0.75,
-    "moods": ["Calm", "Melancholy"],
-    "contexts": ["Chill", "Commute"],
+    "moods": [
+      "Calm",
+      "Melancholy"
+    ],
+    "contexts": [
+      "Chill",
+      "Commute"
+    ],
     "year": 2015,
-    "similarTo": ["t9"]
+    "similarTo": [
+      "t9"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/0a/70/c1/0a70c19e-fa13-157f-6148-bbf38d7af4c5/mzaf_6966548449825225836.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/12/6f/b2/126fb203-46bb-a7fb-05a5-8ac25d466bcc/9332727120466.png/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/12/6f/b2/126fb203-46bb-a7fb-05a5-8ac25d466bcc/9332727120466.png/100x100bb.jpg"
   },
   {
     "id": "t19",
     "title": "God's Plan",
     "artist": "Drake",
     "album": "Scorpion",
-    "genres": ["hiphop"],
+    "genres": [
+      "hiphop"
+    ],
     "energy": 0.7,
     "familiarity": 0.95,
-    "moods": ["Energetic", "Motivational"],
-    "contexts": ["Workout", "Commute"],
+    "moods": [
+      "Energetic",
+      "Motivational"
+    ],
+    "contexts": [
+      "Workout",
+      "Commute"
+    ],
     "year": 2018,
-    "similarTo": ["t5"]
+    "similarTo": [
+      "t5"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/da/7d/f1/da7df14b-8ee6-5020-d850-ccc0381eb141/mzaf_5511967710095380808.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/bb/6d/8f/bb6d8f67-6d04-10b5-dd62-eb5809ac54fc/00602567879152.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/bb/6d/8f/bb6d8f67-6d04-10b5-dd62-eb5809ac54fc/00602567879152.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t20",
     "title": "Moonlight Sonata",
     "artist": "Ludwig van Beethoven",
     "album": "Piano Sonata No. 14",
-    "genres": ["jazz"],
+    "genres": [
+      "jazz"
+    ],
     "energy": 0.15,
     "familiarity": 0.7,
-    "moods": ["Calm", "Melancholy"],
-    "contexts": ["Study", "Chill", "Sleep"],
+    "moods": [
+      "Calm",
+      "Melancholy"
+    ],
+    "contexts": [
+      "Study",
+      "Chill",
+      "Sleep"
+    ],
     "year": 1801,
-    "similarTo": ["t4"]
+    "similarTo": [
+      "t4"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/dd/1c/52/dd1c52b8-4f4d-7cbe-2c31-1da7b58a86d8/mzaf_10022995473598962774.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/1b/37/34/1b373496-8d42-0d65-4667-e805371073bd/8720923871205.png/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/1b/37/34/1b373496-8d42-0d65-4667-e805371073bd/8720923871205.png/100x100bb.jpg"
   },
   {
     "id": "t21",
     "title": "Get Lucky",
     "artist": "Daft Punk",
     "album": "Random Access Memories",
-    "genres": ["edm", "pop"],
+    "genres": [
+      "edm",
+      "pop"
+    ],
     "energy": 0.8,
     "familiarity": 0.98,
-    "moods": ["Happy", "Energetic"],
-    "contexts": ["Party", "Commute"],
+    "moods": [
+      "Happy",
+      "Energetic"
+    ],
+    "contexts": [
+      "Party",
+      "Commute"
+    ],
     "year": 2013,
-    "similarTo": ["t15", "t13"]
+    "similarTo": [
+      "t15",
+      "t13"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/d4/d3/1e/d4d31eb4-7405-b806-8346-3c52ad5b4cf4/mzaf_8095545455942962509.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e8/43/5f/e8435ffa-b6b9-b171-40ab-4ff3959ab661/886443919266.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e8/43/5f/e8435ffa-b6b9-b171-40ab-4ff3959ab661/886443919266.jpg/100x100bb.jpg"
   },
   {
     "id": "t22",
     "title": "Tennessee Whiskey",
     "artist": "Chris Stapleton",
     "album": "Traveller",
-    "genres": ["country", "rnb"],
+    "genres": [
+      "country",
+      "rnb"
+    ],
     "energy": 0.3,
     "familiarity": 0.85,
-    "moods": ["Calm", "Romantic"],
-    "contexts": ["Chill", "Sleep"],
+    "moods": [
+      "Calm",
+      "Romantic"
+    ],
+    "contexts": [
+      "Chill",
+      "Sleep"
+    ],
     "year": 2015,
-    "similarTo": ["t16"]
+    "similarTo": [
+      "t16"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/e3/7e/a3/e37ea341-37f0-9dcb-4d6a-e3f0a2c1ae26/mzaf_2775390428315622059.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/e2/4b/60/e24b6016-8278-bb18-cf5d-d44bf68371da/00602547223838.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/e2/4b/60/e24b6016-8278-bb18-cf5d-d44bf68371da/00602547223838.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t23",
     "title": "Sicko Mode",
     "artist": "Travis Scott",
     "album": "Astroworld",
-    "genres": ["hiphop"],
+    "genres": [
+      "hiphop"
+    ],
     "energy": 0.9,
     "familiarity": 0.95,
-    "moods": ["Energetic", "Motivational"],
-    "contexts": ["Workout", "Party"],
+    "moods": [
+      "Energetic",
+      "Motivational"
+    ],
+    "contexts": [
+      "Workout",
+      "Party"
+    ],
     "year": 2018,
-    "similarTo": ["t5", "t19"]
+    "similarTo": [
+      "t5",
+      "t19"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/85/49/e2/8549e207-7ecf-21a9-7b2f-b414175c6a74/mzaf_10189975321658500285.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/e7/49/8f/e7498f65-df8f-bead-d6e3-2a8d4d642a79/886447235317.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/e7/49/8f/e7498f65-df8f-bead-d6e3-2a8d4d642a79/886447235317.jpg/100x100bb.jpg"
   },
   {
     "id": "t24",
     "title": "Bohemian Rhapsody",
     "artist": "Queen",
     "album": "A Night at the Opera",
-    "genres": ["rock"],
+    "genres": [
+      "rock"
+    ],
     "energy": 0.7,
-    "familiarity": 1.0,
-    "moods": ["Epic", "Nostalgic"],
-    "contexts": ["Party", "Commute"],
+    "familiarity": 1,
+    "moods": [
+      "Epic",
+      "Nostalgic"
+    ],
+    "contexts": [
+      "Party",
+      "Commute"
+    ],
     "year": 1975,
-    "similarTo": ["t12"]
+    "similarTo": [
+      "t12"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/ae/ac/e7/aeace7b3-74d8-7025-0770-37508d58896c/mzaf_833665627772330896.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/4d/08/2a/4d082a9e-7898-1aa1-a02f-339810058d9e/14DMGIM05632.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/4d/08/2a/4d082a9e-7898-1aa1-a02f-339810058d9e/14DMGIM05632.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t25",
     "title": "Mr. Brightside",
     "artist": "The Killers",
     "album": "Hot Fuss",
-    "genres": ["rock", "indie"],
+    "genres": [
+      "rock",
+      "indie"
+    ],
     "energy": 0.95,
     "familiarity": 0.99,
-    "moods": ["Energetic", "Nostalgic"],
-    "contexts": ["Party", "Workout"],
+    "moods": [
+      "Energetic",
+      "Nostalgic"
+    ],
+    "contexts": [
+      "Party",
+      "Workout"
+    ],
     "year": 2004,
-    "similarTo": ["t10"]
+    "similarTo": [
+      "t10"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b3/95/6e/b3956e14-35f0-937e-afb0-72774d3f613f/mzaf_8359343604382181711.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/11/64/9c/11649c80-2066-dba8-77a9-df7eecae26c1/17UM1IM06937.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/11/64/9c/11649c80-2066-dba8-77a9-df7eecae26c1/17UM1IM06937.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t26",
     "title": "Espresso",
     "artist": "Sabrina Carpenter",
     "album": "Short n' Sweet",
-    "genres": ["pop"],
+    "genres": [
+      "pop"
+    ],
     "energy": 0.85,
     "familiarity": 0.95,
-    "moods": ["Energetic", "Happy"],
-    "contexts": ["Party", "Commute"],
+    "moods": [
+      "Energetic",
+      "Happy"
+    ],
+    "contexts": [
+      "Party",
+      "Commute"
+    ],
     "year": 2024,
-    "similarTo": ["t13"]
+    "similarTo": [
+      "t13"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/92/fa/62/92fa6282-c584-f430-b237-0a7edb6d110c/mzaf_14470931554675891836.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/57/e8/7b/57e87ba0-5057-9bb9-c247-ce7dbe426e89/24UMGIM55213.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/57/e8/7b/57e87ba0-5057-9bb9-c247-ce7dbe426e89/24UMGIM55213.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t27",
     "title": "Fortnight",
     "artist": "Taylor Swift",
     "album": "The Tortured Poets Department",
-    "genres": ["pop", "indie"],
+    "genres": [
+      "pop",
+      "indie"
+    ],
     "energy": 0.5,
     "familiarity": 0.98,
-    "moods": ["Melancholy", "Calm"],
-    "contexts": ["Chill", "Study"],
+    "moods": [
+      "Melancholy",
+      "Calm"
+    ],
+    "contexts": [
+      "Chill",
+      "Study"
+    ],
     "year": 2024,
-    "similarTo": ["t1"]
+    "similarTo": [
+      "t1"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/3f/cc/c6/3fccc64d-b2e2-35dc-4a42-75548d3d80d7/mzaf_16462301712629842716.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/6b/7d/61/6b7d61e4-e6f1-83bc-d645-463aa06b33c4/24UMGIM29563.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/6b/7d/61/6b7d61e4-e6f1-83bc-d645-463aa06b33c4/24UMGIM29563.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t28",
     "title": "Good Luck, Babe!",
     "artist": "Chappell Roan",
     "album": "Good Luck, Babe!",
-    "genres": ["pop", "indie"],
+    "genres": [
+      "pop",
+      "indie"
+    ],
     "energy": 0.8,
     "familiarity": 0.9,
-    "moods": ["Energetic", "Happy"],
-    "contexts": ["Party", "Commute"],
+    "moods": [
+      "Energetic",
+      "Happy"
+    ],
+    "contexts": [
+      "Party",
+      "Commute"
+    ],
     "year": 2024,
-    "similarTo": ["t25"]
+    "similarTo": [
+      "t25"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/ae/57/5d/ae575db4-68db-508a-c012-421ee79bfa62/mzaf_5112451481032254728.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/29/a7/c4/29a7c478-351d-25eb-a116-3e68118cdab8/24UMGIM31246.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/29/a7/c4/29a7c478-351d-25eb-a116-3e68118cdab8/24UMGIM31246.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t29",
     "title": "Not Like Us",
     "artist": "Kendrick Lamar",
     "album": "Not Like Us",
-    "genres": ["hiphop"],
+    "genres": [
+      "hiphop"
+    ],
     "energy": 0.95,
     "familiarity": 0.99,
-    "moods": ["Energetic", "Motivational"],
-    "contexts": ["Party", "Workout"],
+    "moods": [
+      "Energetic",
+      "Motivational"
+    ],
+    "contexts": [
+      "Party",
+      "Workout"
+    ],
     "year": 2024,
-    "similarTo": ["t23"]
+    "similarTo": [
+      "t23"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b6/6b/8c/b66b8c42-8c82-242b-4ef1-3655d19ac1aa/mzaf_1950801191699299821.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/31/3a/3f/313a3fbc-bb8f-80c7-b5a2-e226869a38cd/24UMGIM51924.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/31/3a/3f/313a3fbc-bb8f-80c7-b5a2-e226869a38cd/24UMGIM51924.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t30",
     "title": "Too Sweet",
     "artist": "Hozier",
     "album": "Unreal Unearth",
-    "genres": ["indie", "rnb"],
+    "genres": [
+      "indie",
+      "rnb"
+    ],
     "energy": 0.55,
     "familiarity": 0.92,
-    "moods": ["Happy", "Calm"],
-    "contexts": ["Chill", "Commute"],
+    "moods": [
+      "Happy",
+      "Calm"
+    ],
+    "contexts": [
+      "Chill",
+      "Commute"
+    ],
     "year": 2024,
-    "similarTo": ["t18"]
+    "similarTo": [
+      "t18"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/7d/89/47/7d89470a-0a88-7096-f714-c0bf13545666/mzaf_4104862839845738954.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/98/80/95/98809581-4a0e-68a6-04de-b72492e35939/196871908191.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/98/80/95/98809581-4a0e-68a6-04de-b72492e35939/196871908191.jpg/100x100bb.jpg"
   },
   {
     "id": "t31",
     "title": "LUNCH",
     "artist": "Billie Eilish",
     "album": "HIT ME HARD AND SOFT",
-    "genres": ["pop", "indie"],
+    "genres": [
+      "pop",
+      "indie"
+    ],
     "energy": 0.75,
     "familiarity": 0.94,
-    "moods": ["Energetic", "Happy"],
-    "contexts": ["Party", "Commute"],
+    "moods": [
+      "Energetic",
+      "Happy"
+    ],
+    "contexts": [
+      "Party",
+      "Commute"
+    ],
     "year": 2024,
-    "similarTo": ["t7"]
+    "similarTo": [
+      "t7"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/86/7e/37/867e37dc-34fa-f457-690a-1b540b763ee9/mzaf_17723050439487544295.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/92/9f/69/929f69f1-9977-3a44-d674-11f70c852d1b/24UMGIM36186.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/92/9f/69/929f69f1-9977-3a44-d674-11f70c852d1b/24UMGIM36186.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t32",
     "title": "Pink Skies",
     "artist": "Zach Bryan",
     "album": "The Great American Bar Scene",
-    "genres": ["country"],
+    "genres": [
+      "country"
+    ],
     "energy": 0.4,
     "familiarity": 0.88,
-    "moods": ["Nostalgic", "Calm"],
-    "contexts": ["Chill", "Study"],
+    "moods": [
+      "Nostalgic",
+      "Calm"
+    ],
+    "contexts": [
+      "Chill",
+      "Study"
+    ],
     "year": 2024,
-    "similarTo": ["t22"]
+    "similarTo": [
+      "t22"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/9b/66/e5/9b66e52f-d8b6-1bd4-99fa-1e4a2466f2a0/mzaf_4589816097369270712.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/a3/25/58/a3255839-0068-40f0-9985-7603f061c30f/054391263575.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/a3/25/58/a3255839-0068-40f0-9985-7603f061c30f/054391263575.jpg/100x100bb.jpg"
   },
   {
     "id": "t33",
     "title": "A Bar Song (Tipsy)",
     "artist": "Shaboozey",
     "album": "A Bar Song (Tipsy)",
-    "genres": ["country", "hiphop"],
+    "genres": [
+      "country",
+      "hiphop"
+    ],
     "energy": 0.85,
     "familiarity": 0.96,
-    "moods": ["Happy", "Energetic"],
-    "contexts": ["Party", "Workout"],
+    "moods": [
+      "Happy",
+      "Energetic"
+    ],
+    "contexts": [
+      "Party",
+      "Workout"
+    ],
     "year": 2024,
-    "similarTo": ["t8"]
+    "similarTo": [
+      "t8"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/2a/c9/bb/2ac9bbe7-d736-408b-c092-430ce07acac8/mzaf_6543703908515837141.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/be/db/81/bedb81c3-ca23-a1b9-f275-59e46ae4fdb1/197342625517_cover.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/be/db/81/bedb81c3-ca23-a1b9-f275-59e46ae4fdb1/197342625517_cover.jpg/100x100bb.jpg"
   },
   {
     "id": "t34",
     "title": "Lose Control",
     "artist": "Teddy Swims",
     "album": "I've Tried Everything But Therapy",
-    "genres": ["rnb"],
+    "genres": [
+      "rnb"
+    ],
     "energy": 0.65,
     "familiarity": 0.93,
-    "moods": ["Melancholy", "Epic"],
-    "contexts": ["Commute"],
+    "moods": [
+      "Melancholy",
+      "Epic"
+    ],
+    "contexts": [
+      "Commute"
+    ],
     "year": 2023,
-    "similarTo": ["t22"]
+    "similarTo": [
+      "t22"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/1a/4d/cc/1a4dccfd-ab4a-35ac-6477-45e33074f303/mzaf_17951172482135259186.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/36/19/66/36196640-1561-dc5e-c6bc-1e5f4befa583/093624856771.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/36/19/66/36196640-1561-dc5e-c6bc-1e5f4befa583/093624856771.jpg/100x100bb.jpg"
   },
   {
     "id": "t35",
     "title": "Beautiful Things",
     "artist": "Benson Boone",
     "album": "Fireworks & Rollerblades",
-    "genres": ["pop", "rock"],
+    "genres": [
+      "pop",
+      "rock"
+    ],
     "energy": 0.8,
     "familiarity": 0.97,
-    "moods": ["Energetic", "Epic"],
-    "contexts": ["Commute", "Workout"],
+    "moods": [
+      "Energetic",
+      "Epic"
+    ],
+    "contexts": [
+      "Commute",
+      "Workout"
+    ],
     "year": 2024,
-    "similarTo": ["t34"]
+    "similarTo": [
+      "t34"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d5/22/60/d5226046-d24b-00e2-685b-25f75fca012e/mzaf_11823776316685108152.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/54/f4/92/54f49210-e260-b519-ebbd-f4f40ee710cd/054391342751.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/54/f4/92/54f49210-e260-b519-ebbd-f4f40ee710cd/054391342751.jpg/100x100bb.jpg"
   },
   {
     "id": "t36",
     "title": "Giant Steps",
     "artist": "John Coltrane",
     "album": "Giant Steps",
-    "genres": ["jazz"],
+    "genres": [
+      "jazz"
+    ],
     "energy": 0.5,
     "familiarity": 0.6,
-    "moods": ["Energetic", "Focus"],
-    "contexts": ["Study", "Commute"],
+    "moods": [
+      "Energetic",
+      "Focus"
+    ],
+    "contexts": [
+      "Study",
+      "Commute"
+    ],
     "year": 1960,
-    "similarTo": ["t6", "t14"]
+    "similarTo": [
+      "t6",
+      "t14"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/38/20/8b/38208b22-5c68-086e-621f-eb8230cd272d/mzaf_17388358421837560145.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music5/v4/68/f6/ca/68f6ca33-222f-52e3-0e89-efe650afce10/603497893065.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music5/v4/68/f6/ca/68f6ca33-222f-52e3-0e89-efe650afce10/603497893065.jpg/100x100bb.jpg"
   },
   {
     "id": "t37",
     "title": "Spring (The Four Seasons)",
     "artist": "Antonio Vivaldi",
     "album": "The Contest Between Harmony and Invention",
-    "genres": ["jazz"],
+    "genres": [
+      "jazz"
+    ],
     "energy": 0.5,
     "familiarity": 0.9,
-    "moods": ["Happy", "Focus"],
-    "contexts": ["Study", "Chill"],
+    "moods": [
+      "Happy",
+      "Focus"
+    ],
+    "contexts": [
+      "Study",
+      "Chill"
+    ],
     "year": 1725,
-    "similarTo": ["t4", "t20"]
+    "similarTo": [
+      "t4",
+      "t20"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/02/9f/55/029f5545-d06a-2be9-c094-b546b10fcf3b/mzaf_12107630082563112319.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music/eb/92/3a/mzi.xgambhhu.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music/eb/92/3a/mzi.xgambhhu.jpg/100x100bb.jpg"
   },
   {
     "id": "t38",
     "title": "Awake",
     "artist": "Tycho",
     "album": "Awake",
-    "genres": ["edm", "indie"],
+    "genres": [
+      "edm",
+      "indie"
+    ],
     "energy": 0.5,
     "familiarity": 0.5,
-    "moods": ["Calm", "Focus"],
-    "contexts": ["Study", "Chill", "Commute"],
+    "moods": [
+      "Calm",
+      "Focus"
+    ],
+    "contexts": [
+      "Study",
+      "Chill",
+      "Commute"
+    ],
     "year": 2014,
-    "similarTo": ["t7"]
+    "similarTo": [
+      "t7"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/67/97/6e/67976e57-e866-5319-c202-91e1c1882e5e/mzaf_13595347833956217567.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/7b/b8/d6/7bb8d640-dfdc-1473-3948-4060af9a3819/804297820828.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/7b/b8/d6/7bb8d640-dfdc-1473-3948-4060af9a3819/804297820828.jpg/100x100bb.jpg"
   },
   {
     "id": "t39",
     "title": "Dreams",
     "artist": "Fleetwood Mac",
     "album": "Rumours",
-    "genres": ["rock", "pop"],
+    "genres": [
+      "rock",
+      "pop"
+    ],
     "energy": 0.45,
     "familiarity": 0.95,
-    "moods": ["Calm", "Nostalgic"],
-    "contexts": ["Chill", "Commute"],
+    "moods": [
+      "Calm",
+      "Nostalgic"
+    ],
+    "contexts": [
+      "Chill",
+      "Commute"
+    ],
     "year": 1977,
-    "similarTo": ["t22"]
+    "similarTo": [
+      "t22"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/0b/b8/6f/0bb86f18-6a34-e1a9-a19f-aeed9cf725a9/mzaf_14953277666945472171.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/d2/48/f4/d248f4ae-a7e4-a48e-1588-6617de3e8d76/mzi.izeorbmm.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/d2/48/f4/d248f4ae-a7e4-a48e-1588-6617de3e8d76/mzi.izeorbmm.jpg/100x100bb.jpg"
   },
   {
     "id": "t40",
     "title": "Hey Ya!",
     "artist": "Outkast",
     "album": "The Speakerboxxx/The Love Below",
-    "genres": ["hiphop", "pop"],
+    "genres": [
+      "hiphop",
+      "pop"
+    ],
     "energy": 0.95,
     "familiarity": 0.98,
-    "moods": ["Happy", "Energetic"],
-    "contexts": ["Party", "Workout"],
+    "moods": [
+      "Happy",
+      "Energetic"
+    ],
+    "contexts": [
+      "Party",
+      "Workout"
+    ],
     "year": 2003,
-    "similarTo": ["t21"]
+    "similarTo": [
+      "t21"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/e2/bc/d2/e2bcd296-e9e1-04b4-e2ff-01f294b98ebd/mzaf_10534525979607772130.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/a3/35/54/a33554b6-4122-cdfd-29e8-d17897280263/dj.yiwizfgg.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/a3/35/54/a33554b6-4122-cdfd-29e8-d17897280263/dj.yiwizfgg.jpg/100x100bb.jpg"
   },
   {
     "id": "t41",
     "title": "What's Going On",
     "artist": "Marvin Gaye",
     "album": "What's Going On",
-    "genres": ["rnb"],
+    "genres": [
+      "rnb"
+    ],
     "energy": 0.4,
     "familiarity": 0.9,
-    "moods": ["Melancholy", "Calm"],
-    "contexts": ["Chill"],
+    "moods": [
+      "Melancholy",
+      "Calm"
+    ],
+    "contexts": [
+      "Chill"
+    ],
     "year": 1971,
-    "similarTo": ["t16"]
+    "similarTo": [
+      "t16"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/2d/4f/8c/2d4f8c3c-ac44-d529-a948-fb7673c4eb07/mzaf_5296517973227145919.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/76/36/2d/76362d74-cb7a-8ef9-104e-cde1d858e9a9/20UMGIM95279.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/76/36/2d/76362d74-cb7a-8ef9-104e-cde1d858e9a9/20UMGIM95279.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t42",
     "title": "Last Nite",
     "artist": "The Strokes",
     "album": "Is This It",
-    "genres": ["indie", "rock"],
+    "genres": [
+      "indie",
+      "rock"
+    ],
     "energy": 0.85,
     "familiarity": 0.8,
-    "moods": ["Energetic", "Motivational"],
-    "contexts": ["Party", "Workout"],
+    "moods": [
+      "Energetic",
+      "Motivational"
+    ],
+    "contexts": [
+      "Party",
+      "Workout"
+    ],
     "year": 2001,
-    "similarTo": ["t10"]
+    "similarTo": [
+      "t10"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/2e/e7/74/2ee774ae-2257-3220-3b87-2306d88324b4/mzaf_16463872203751091452.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Features115/v4/ea/04/d4/ea04d45d-6f5d-ede6-fb64-71f3e6a6e62f/dj.ojkzzidd.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Features115/v4/ea/04/d4/ea04d45d-6f5d-ede6-fb64-71f3e6a6e62f/dj.ojkzzidd.jpg/100x100bb.jpg"
   },
   {
     "id": "t43",
-    "title": "Slow Burn",
-    "artist": "Kacey Musgraves",
-    "album": "Golden Hour",
-    "genres": ["country", "indie"],
-    "energy": 0.4,
-    "familiarity": 0.7,
-    "moods": ["Calm", "Nostalgic"],
-    "contexts": ["Chill", "Commute"],
-    "year": 2018,
-    "similarTo": ["t32"]
+    "title": "Need You Now",
+    "artist": "Lady A",
+    "album": "Need You Now",
+    "genres": [
+      "country",
+      "pop"
+    ],
+    "energy": 0.5,
+    "familiarity": 0.85,
+    "moods": [
+      "Melancholy",
+      "Romantic"
+    ],
+    "contexts": [
+      "Chill",
+      "Commute"
+    ],
+    "year": 2009,
+    "similarTo": [
+      "t16"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/22/76/e9/2276e9c4-bb74-5615-631e-b961ae2f1e97/mzaf_4617600362825399760.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/8f/60/92/8f6092a6-8efb-c71b-20d1-81da6be2a716/13UABIM57670.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/8f/60/92/8f6092a6-8efb-c71b-20d1-81da6be2a716/13UABIM57670.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t44",
     "title": "Karma Police",
     "artist": "Radiohead",
     "album": "OK Computer",
-    "genres": ["rock", "indie"],
+    "genres": [
+      "rock",
+      "indie"
+    ],
     "energy": 0.5,
     "familiarity": 0.85,
-    "moods": ["Melancholy", "Epic"],
-    "contexts": ["Chill", "Study"],
+    "moods": [
+      "Melancholy",
+      "Epic"
+    ],
+    "contexts": [
+      "Chill",
+      "Study"
+    ],
     "year": 1997,
-    "similarTo": ["t18"]
+    "similarTo": [
+      "t18"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/95/d7/8b/95d78bf8-aa46-9d40-ce93-0652918bc68f/mzaf_12066288776609103708.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/07/60/ba/0760ba0f-148c-b18f-d0ff-169ee96f3af5/634904078164.png/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/07/60/ba/0760ba0f-148c-b18f-d0ff-169ee96f3af5/634904078164.png/100x100bb.jpg"
   },
   {
     "id": "t45",
-    "title": "Walking On A Dream",
-    "artist": "Empire of the Sun",
-    "album": "Walking on a Dream",
-    "genres": ["edm", "pop"],
+    "title": "Midnight City",
+    "artist": "M83",
+    "album": "Hurry Up, We're Dreaming",
+    "genres": [
+      "edm",
+      "indie"
+    ],
     "energy": 0.8,
-    "familiarity": 0.75,
-    "moods": ["Happy", "Energetic"],
-    "contexts": ["Party", "Workout"],
-    "year": 2008,
-    "similarTo": ["t17"]
+    "familiarity": 0.8,
+    "moods": [
+      "Energetic",
+      "Epic"
+    ],
+    "contexts": [
+      "Party",
+      "Commute"
+    ],
+    "year": 2011,
+    "similarTo": [
+      "t17"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/71/5c/80/715c80fc-ebe4-e713-487c-5bdefee6c6f3/mzaf_3698387428135478316.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/cb/7b/a9/cb7ba903-b5f1-cc21-90db-7a81b7aa0997/724596951057.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/cb/7b/a9/cb7ba903-b5f1-cc21-90db-7a81b7aa0997/724596951057.jpg/100x100bb.jpg"
   },
   {
     "id": "t46",
-    "title": "Weightless",
-    "artist": "Marconi Union",
-    "album": "Weightless",
-    "genres": ["edm"],
-    "energy": 0.1,
-    "familiarity": 0.4,
-    "moods": ["Calm", "Focus"],
-    "contexts": ["Sleep", "Study", "Chill"],
-    "year": 2011,
-    "similarTo": ["t4"]
+    "title": "River Flows In You",
+    "artist": "Yiruma",
+    "album": "First Love",
+    "genres": [
+      "jazz"
+    ],
+    "energy": 0.15,
+    "familiarity": 0.75,
+    "moods": [
+      "Calm",
+      "Romantic"
+    ],
+    "contexts": [
+      "Sleep",
+      "Study",
+      "Chill"
+    ],
+    "year": 2001,
+    "similarTo": [
+      "t4",
+      "t20"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/fb/20/de/fb20de73-718c-3639-b2e9-f25f7004572a/mzaf_13817178089986043808.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/5f/f4/9b/5ff49b8c-d0bb-3748-14f4-131edfb332ce/first_love_3000.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/5f/f4/9b/5ff49b8c-d0bb-3748-14f4-131edfb332ce/first_love_3000.jpg/100x100bb.jpg"
   },
   {
     "id": "t47",
     "title": "Gymnopédie No. 1",
     "artist": "Erik Satie",
     "album": "Gymnopédies",
-    "genres": ["jazz"],
+    "genres": [
+      "jazz"
+    ],
     "energy": 0.15,
     "familiarity": 0.65,
-    "moods": ["Calm", "Melancholy"],
-    "contexts": ["Sleep", "Study", "Chill"],
+    "moods": [
+      "Calm",
+      "Melancholy"
+    ],
+    "contexts": [
+      "Sleep",
+      "Study",
+      "Chill"
+    ],
     "year": 1888,
-    "similarTo": ["t4", "t20"]
+    "similarTo": [
+      "t4",
+      "t20"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/e3/6b/b4/e36bb4f2-a700-79f6-9f4b-0b895018b792/mzaf_3105351849404506325.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/d9/6f/d5/d96fd59f-22a4-9c42-7ce4-1d0aafa841d2/752470763120_cover.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/d9/6f/d5/d96fd59f-22a4-9c42-7ce4-1d0aafa841d2/752470763120_cover.jpg/100x100bb.jpg"
   },
   {
     "id": "t48",
     "title": "Sunset Lover",
     "artist": "Petit Biscuit",
     "album": "Presence",
-    "genres": ["edm", "indie"],
+    "genres": [
+      "edm",
+      "indie"
+    ],
     "energy": 0.25,
     "familiarity": 0.7,
-    "moods": ["Calm", "Romantic"],
-    "contexts": ["Sleep", "Chill"],
+    "moods": [
+      "Calm",
+      "Romantic"
+    ],
+    "contexts": [
+      "Sleep",
+      "Chill"
+    ],
     "year": 2015,
-    "similarTo": ["t38"]
+    "similarTo": [
+      "t38"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/55/2d/59/552d59fd-44a4-46f1-072c-4d0b1c69e3f0/mzaf_11893605365869470578.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/78/1c/93/781c934a-c233-cfce-39db-31f7284969b4/cover.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/78/1c/93/781c934a-c233-cfce-39db-31f7284969b4/cover.jpg/100x100bb.jpg"
   },
   {
     "id": "t49",
-    "title": "Re: Stacks",
+    "title": "Skinny Love",
     "artist": "Bon Iver",
     "album": "For Emma, Forever Ago",
-    "genres": ["indie"],
-    "energy": 0.2,
-    "familiarity": 0.6,
-    "moods": ["Melancholy", "Calm"],
-    "contexts": ["Sleep", "Chill"],
+    "genres": [
+      "indie"
+    ],
+    "energy": 0.3,
+    "familiarity": 0.7,
+    "moods": [
+      "Melancholy",
+      "Calm"
+    ],
+    "contexts": [
+      "Sleep",
+      "Chill"
+    ],
     "year": 2007,
-    "similarTo": ["t9"]
+    "similarTo": [
+      "t9"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/d2/2f/a4/d22fa4db-97d9-4d99-7272-5ae5ed58de21/mzaf_2631945908793863176.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/21/2f/ea/212fea18-5fdc-ba4d-5dd7-1b07aaa88b67/656605211565.tif/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/21/2f/ea/212fea18-5fdc-ba4d-5dd7-1b07aaa88b67/656605211565.tif/100x100bb.jpg"
   },
   {
     "id": "t50",
     "title": "Intro",
     "artist": "The xx",
     "album": "xx",
-    "genres": ["indie", "edm"],
+    "genres": [
+      "indie",
+      "edm"
+    ],
     "energy": 0.3,
     "familiarity": 0.75,
-    "moods": ["Calm", "Romantic"],
-    "contexts": ["Sleep", "Chill", "Study"],
+    "moods": [
+      "Calm",
+      "Romantic"
+    ],
+    "contexts": [
+      "Sleep",
+      "Chill",
+      "Study"
+    ],
     "year": 2009,
-    "similarTo": ["t38"]
+    "similarTo": [
+      "t38"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/c4/93/a7/c493a708-cf0f-bfe9-17bc-6d09073f784e/mzaf_14818845250623591862.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/28/44/8e/28448e14-19be-438b-bc9b-8c1d3f68f578/609008295069.png/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/28/44/8e/28448e14-19be-438b-bc9b-8c1d3f68f578/609008295069.png/100x100bb.jpg"
   },
   {
     "id": "t51",
-    "title": "Saturn",
-    "artist": "Sleeping At Last",
-    "album": "Atlas: Space",
-    "genres": ["indie", "pop"],
-    "energy": 0.2,
-    "familiarity": 0.55,
-    "moods": ["Epic", "Calm"],
-    "contexts": ["Sleep", "Chill"],
-    "year": 2014,
-    "similarTo": ["t49"]
+    "title": "Chasing Cars",
+    "artist": "Snow Patrol",
+    "album": "Eyes Open",
+    "genres": [
+      "rock",
+      "indie"
+    ],
+    "energy": 0.35,
+    "familiarity": 0.9,
+    "moods": [
+      "Melancholy",
+      "Romantic"
+    ],
+    "contexts": [
+      "Sleep",
+      "Chill"
+    ],
+    "year": 2006,
+    "similarTo": [
+      "t18"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/ef/86/77/ef8677a6-7410-c7c2-dce6-f5b4994cf284/mzaf_2029555300266166291.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/c4/25/bf/c425bf7c-f3d8-6baf-7397-40868971f77f/06UMGIM43473.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/c4/25/bf/c425bf7c-f3d8-6baf-7397-40868971f77f/06UMGIM43473.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t52",
-    "title": "Ocean Eyes",
+    "title": "Lovely",
     "artist": "Billie Eilish",
-    "album": "Don't Smile at Me",
-    "genres": ["pop", "indie"],
+    "album": "Lovely",
+    "genres": [
+      "pop",
+      "indie"
+    ],
     "energy": 0.25,
     "familiarity": 0.9,
-    "moods": ["Melancholy", "Romantic"],
-    "contexts": ["Sleep", "Chill"],
-    "year": 2015,
-    "similarTo": ["t9"]
+    "moods": [
+      "Melancholy",
+      "Calm"
+    ],
+    "contexts": [
+      "Sleep",
+      "Chill"
+    ],
+    "year": 2018,
+    "similarTo": [
+      "t9"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/92/e9/94/92e9949d-7d6f-5ff8-a586-8d6cde186aaa/mzaf_7346702548563727816.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/27/94/d4/2794d4fc-c3e2-2373-3e6c-dd82fd5aefe6/18UMGIM18200.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/27/94/d4/2794d4fc-c3e2-2373-3e6c-dd82fd5aefe6/18UMGIM18200.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t53",
-    "title": "Nocturne Op. 9 No. 2",
-    "artist": "Frédéric Chopin",
-    "album": "Nocturnes",
-    "genres": ["jazz"],
-    "energy": 0.15,
-    "familiarity": 0.7,
-    "moods": ["Calm", "Romantic"],
-    "contexts": ["Sleep", "Study", "Chill"],
-    "year": 1832,
-    "similarTo": ["t20", "t4"]
+    "title": "All Of Me",
+    "artist": "John Legend",
+    "album": "Love in the Future",
+    "genres": [
+      "rnb",
+      "pop"
+    ],
+    "energy": 0.3,
+    "familiarity": 0.95,
+    "moods": [
+      "Romantic",
+      "Calm"
+    ],
+    "contexts": [
+      "Chill",
+      "Sleep"
+    ],
+    "year": 2013,
+    "similarTo": [
+      "t22"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/e2/99/c1/e299c15b-d2af-3ac6-8404-47dfece3fbff/mzaf_7741965493973309922.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/22/71/b9/2271b906-85b3-06ee-e611-489b91df0b73/886444160742.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/22/71/b9/2271b906-85b3-06ee-e611-489b91df0b73/886444160742.jpg/100x100bb.jpg"
   },
   {
     "id": "t54",
-    "title": "Pink + White",
-    "artist": "Frank Ocean",
-    "album": "Blonde",
-    "genres": ["rnb", "indie"],
+    "title": "Young and Beautiful",
+    "artist": "Lana Del Rey",
+    "album": "The Great Gatsby",
+    "genres": [
+      "pop",
+      "indie"
+    ],
     "energy": 0.3,
     "familiarity": 0.8,
-    "moods": ["Nostalgic", "Calm"],
-    "contexts": ["Chill", "Sleep"],
-    "year": 2016,
-    "similarTo": ["t9"]
+    "moods": [
+      "Melancholy",
+      "Romantic"
+    ],
+    "contexts": [
+      "Chill",
+      "Sleep"
+    ],
+    "year": 2013,
+    "similarTo": [
+      "t9"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/ff/bd/12/ffbd1272-cca8-9723-e136-bbf8482e3ed8/mzaf_17489546432997682812.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/e3/e3/13/e3e31393-abf5-e9b1-edc4-20ede35d0c75/13UMGIM43701.rgb.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/e3/e3/13/e3e31393-abf5-e9b1-edc4-20ede35d0c75/13UMGIM43701.rgb.jpg/100x100bb.jpg"
   },
   {
     "id": "t55",
-    "title": "Holocene",
-    "artist": "Bon Iver",
-    "album": "Bon Iver",
-    "genres": ["indie"],
-    "energy": 0.25,
-    "familiarity": 0.65,
-    "moods": ["Epic", "Melancholy"],
-    "contexts": ["Sleep", "Chill"],
-    "year": 2011,
-    "similarTo": ["t49"]
+    "title": "First Day of My Life",
+    "artist": "Bright Eyes",
+    "album": "I'm Wide Awake, It's Morning",
+    "genres": [
+      "indie"
+    ],
+    "energy": 0.35,
+    "familiarity": 0.6,
+    "moods": [
+      "Happy",
+      "Romantic"
+    ],
+    "contexts": [
+      "Chill"
+    ],
+    "year": 2005,
+    "similarTo": [
+      "t18"
+    ],
+    "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/42/07/f8/4207f8f1-6c11-4b08-aff8-ce6a26a9c436/mzaf_10134483815704243837.plus.aac.p.m4a",
+    "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/0d/83/fd/0d83fd2e-1cb5-7965-b392-f91f80188290/508.jpg/600x600bb.jpg",
+    "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/0d/83/fd/0d83fd2e-1cb5-7965-b392-f91f80188290/508.jpg/100x100bb.jpg"
   }
 ]

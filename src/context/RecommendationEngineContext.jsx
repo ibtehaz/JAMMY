@@ -123,18 +123,17 @@ function generatePlaylist(playlistConfig, tracks, userProfile, feedbackTimeline 
   const playlistContext = playlistConfig?.context || null;
   
   const scored = tracks
-    .filter(t => !dislikedIds.has(t.id)) // Filter out disliked tracks entirely
+    .filter(t => !dislikedIds.has(t.id))
     .map(t => {
       const baseScore = scoreTrack(t, userProfile, playlistContext);
       const skipCount = getSkipCountForTrack(t.id, feedbackTimeline);
       const isLiked = likedIds.has(t.id);
       
-      // Liked tracks: boost score and reduce skip penalty impact
       const skipPenalty = isLiked 
-        ? Math.max(0.9, calculateSkipPenalty(skipCount)) // Liked tracks have max 10% skip penalty
+        ? Math.max(0.9, calculateSkipPenalty(skipCount))
         : calculateSkipPenalty(skipCount);
       
-      const likeBoost = isLiked ? 1.1 : 1.0; // 10% boost for liked tracks
+      const likeBoost = isLiked ? 1.1 : 1.0;
       const finalScore = baseScore * skipPenalty * likeBoost;
       
       return {
@@ -245,7 +244,7 @@ export function RecommendationEngineProvider({ children }) {
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
   const [isTuningModalOpen, setIsTuningModalOpen] = useState(false);
   
-  // Audio state - global for persistent playback
+  // Audio state
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -345,7 +344,7 @@ export function RecommendationEngineProvider({ children }) {
     const currentProfile = userProfileRef.current;
     const currentFeedback = feedbackTimelineRef.current;
     
-    // Use refs to get fresh values (avoid stale closure)
+    // Use refs to get current values
     const freshPlaylistId = currentPlaylistIdRef.current;
     const freshPlaylists = playlistsRef.current;
     const freshTrackIndex = currentTrackIndexRef.current;
@@ -442,7 +441,6 @@ export function RecommendationEngineProvider({ children }) {
   const likeSong = (trackId, context = null) => {
     setConsecutiveSkips(0);
     
-    // Add to liked, remove from disliked
     setLikedTrackIds(prev => new Set([...prev, trackId]));
     setDislikedTrackIds(prev => {
       const newSet = new Set(prev);
@@ -481,7 +479,6 @@ export function RecommendationEngineProvider({ children }) {
   };
 
   const unlikeSong = (trackId) => {
-    // Remove from liked (reverse the genre weight boost)
     setLikedTrackIds(prev => {
       const newSet = new Set(prev);
       newSet.delete(trackId);
@@ -527,7 +524,6 @@ export function RecommendationEngineProvider({ children }) {
   const dislikeSong = (trackId) => {
     setConsecutiveSkips(0);
     
-    // Add to disliked, remove from liked
     setDislikedTrackIds(prev => new Set([...prev, trackId]));
     setLikedTrackIds(prev => {
       const newSet = new Set(prev);
@@ -561,7 +557,6 @@ export function RecommendationEngineProvider({ children }) {
   };
 
   const undislikeSong = (trackId) => {
-    // Remove from disliked (reverse the genre weight penalty)
     setDislikedTrackIds(prev => {
       const newSet = new Set(prev);
       newSet.delete(trackId);
@@ -655,11 +650,9 @@ export function RecommendationEngineProvider({ children }) {
     setCurrentTrackIndex(prev => index >= 0 ? index : prev);
   }, []);
 
-  // Get current track for audio
   const currentPlaylist = playlists.find(p => p.id === currentPlaylistId);
   const currentTrack = currentPlaylist?.tracks[currentTrackIndex];
 
-  // Audio playback effect - runs when track changes
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !currentTrack?.previewUrl) {
@@ -667,7 +660,6 @@ export function RecommendationEngineProvider({ children }) {
       return;
     }
 
-    // Only change source if it's different
     if (audio.src !== currentTrack.previewUrl) {
       audio.src = currentTrack.previewUrl;
       audio.load();
@@ -683,7 +675,6 @@ export function RecommendationEngineProvider({ children }) {
     }
   }, [currentTrack?.id, currentTrack?.previewUrl]);
 
-  // Audio event listeners
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -692,7 +683,6 @@ export function RecommendationEngineProvider({ children }) {
     const updateDuration = () => setDuration(audio.duration);
     const handleEnded = () => {
       setIsPlaying(false);
-      // Auto-advance to next track
       const playlist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
       const idx = currentTrackIndexRef.current;
       if (playlist && idx < playlist.tracks.length - 1) {
@@ -775,7 +765,6 @@ export function RecommendationEngineProvider({ children }) {
     setIsActivityModalOpen,
     isTuningModalOpen,
     setIsTuningModalOpen,
-    // Audio state & controls
     isPlaying,
     currentTime,
     duration,
@@ -787,7 +776,6 @@ export function RecommendationEngineProvider({ children }) {
   return (
     <RecommendationEngineContext.Provider value={value}>
       {children}
-      {/* Global audio element for persistent playback */}
       <audio ref={audioRef} />
     </RecommendationEngineContext.Provider>
   );
