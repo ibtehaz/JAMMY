@@ -373,18 +373,40 @@ export function RecommendationEngineProvider({ children }) {
       };
     });
     
-    // Preserve current track position when playlists regenerate
+    // Preserve current track when playlists regenerate
     if (freshPlaylistId) {
-      const currentPlaylist = freshPlaylists.find(p => p.id === freshPlaylistId);
-      const currentTrack = currentPlaylist?.tracks[freshTrackIndex];
+      const oldPlaylist = freshPlaylists.find(p => p.id === freshPlaylistId);
+      const currentTrack = oldPlaylist?.tracks[freshTrackIndex];
       
       if (currentTrack) {
-        const newCurrentPlaylist = newPlaylists.find(p => p.id === freshPlaylistId);
-        if (newCurrentPlaylist) {
-          const newIndex = newCurrentPlaylist.tracks.findIndex(t => t.id === currentTrack.id);
-          if (newIndex !== -1 && newIndex !== freshTrackIndex) {
+        const newPlaylistIndex = newPlaylists.findIndex(p => p.id === freshPlaylistId);
+        if (newPlaylistIndex !== -1) {
+          const newPlaylist = newPlaylists[newPlaylistIndex];
+          const newIndex = newPlaylist.tracks.findIndex(t => t.id === currentTrack.id);
+          
+          if (newIndex === -1) {
+            // Track fell out of top 20 - insert it at current position to prevent "skip"
+            const trackWithScore = {
+              ...currentTrack,
+              score: currentTrack.score * 0.95,
+              confidence: currentTrack.confidence * 0.95
+            };
+            // Ensure insert position doesn't exceed array length
+            const insertIndex = Math.min(freshTrackIndex, newPlaylist.tracks.length);
+            newPlaylists[newPlaylistIndex].tracks.splice(insertIndex, 0, trackWithScore);
+            // Trim back to limit if needed
+            if (newPlaylists[newPlaylistIndex].tracks.length > 20) {
+              newPlaylists[newPlaylistIndex].tracks = newPlaylists[newPlaylistIndex].tracks.slice(0, 20);
+            }
+            // Update index if it changed
+            if (insertIndex !== freshTrackIndex) {
+              setCurrentTrackIndex(insertIndex);
+            }
+          } else if (newIndex !== freshTrackIndex) {
+            // Track moved position - update index to follow it
             setCurrentTrackIndex(newIndex);
           }
+          // else: track is at same position, do nothing
         }
       }
     }
