@@ -1,6 +1,6 @@
 const ITUNES_API_BASE = 'https://itunes.apple.com/search';
 const CACHE_KEY = 'musicRecc_enrichedTracks';
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 
 export async function fetchTrackPreview(trackName, artistName) {
   try {
@@ -79,7 +79,7 @@ function setCachedTracks(tracks) {
   }
 }
 
-async function fetchInBatches(tracks, batchSize = 5) {
+async function fetchInBatches(tracks, batchSize = 3) {
   const results = [];
   
   for (let i = 0; i < tracks.length; i += batchSize) {
@@ -88,6 +88,11 @@ async function fetchInBatches(tracks, batchSize = 5) {
       batch.map(track => enrichTrackWithPreview(track))
     );
     results.push(...batchResults);
+    
+    // Add delay between batches to avoid iTunes rate limiting
+    if (i + batchSize < tracks.length) {
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
   }
   
   return results;
