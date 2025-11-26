@@ -23,11 +23,14 @@ export default function FeedbackTimeline({ isOpen, onClose }) {
   };
 
   const getTitle = (event) => {
+    // For track-related events, show the track title if available
+    const trackName = event.trackTitle ? `"${event.trackTitle}"` : 'a song';
+    
     switch (event.type) {
-      case 'like': return 'Liked a song';
-      case 'unlike': return 'Unliked a song';
-      case 'dislike': return 'Disliked a song';
-      case 'undislike': return 'Removed dislike';
+      case 'like': return `Liked ${trackName}`;
+      case 'unlike': return `Unliked ${trackName}`;
+      case 'dislike': return `Disliked ${trackName}`;
+      case 'undislike': return `Restored ${trackName}`;
       case 'skip': return 'Skipped a song';
       case 'skip_feedback': return 'Provided skip feedback';
       case 'tuning_change': return 'Adjusted Tuning';
@@ -67,25 +70,28 @@ export default function FeedbackTimeline({ isOpen, onClose }) {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04, duration: 0.25 }}
-              className="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors duration-150"
+              className="flex items-start gap-3 p-2.5 rounded-2xl hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors duration-150"
             >
-              <div className="w-10 h-10 rounded-xl bg-white/[0.06] flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-white/[0.06] flex items-center justify-center shrink-0 mt-0.5">
                 {getIcon(event.type)}
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-medium truncate text-[14px] text-white leading-tight">{getTitle(event)}</p>
-                <p className="text-[12px] text-gray-500 truncate mt-0.5">{event.impact || formatTime(event.timestamp)}</p>
+              <div className="flex-1 min-w-0 py-0.5">
+                <p className="font-medium text-[14px] text-white leading-snug line-clamp-2">{getTitle(event)}</p>
+                <p className="text-[11px] text-gray-500 mt-1 line-clamp-2">{event.impact || formatTime(event.timestamp)}</p>
               </div>
-              {event.restoreState && (
-                <motion.button 
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => undoFeedbackEvent(event.id)}
-                  className="p-2.5 hover:bg-white/10 rounded-xl transition-colors shrink-0"
-                >
-                  <Undo2 className="w-4 h-4 text-gray-400" />
-                </motion.button>
-              )}
-              <span className="text-[10px] text-gray-600 shrink-0">{formatTime(event.timestamp)}</span>
+              <div className="flex items-center gap-1 shrink-0">
+                {event.restoreState && (
+                  <motion.button 
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => undoFeedbackEvent(event.id)}
+                    className="p-2 hover:bg-white/10 rounded-xl transition-colors"
+                    title="Undo this action"
+                  >
+                    <Undo2 className="w-4 h-4 text-gray-400" />
+                  </motion.button>
+                )}
+                <span className="text-[10px] text-gray-600 w-12 text-right">{formatTime(event.timestamp)}</span>
+              </div>
             </motion.div>
           ))
         )}

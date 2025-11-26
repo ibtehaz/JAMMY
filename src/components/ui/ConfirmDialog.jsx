@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle } from 'lucide-react';
 import ModalBackdrop from './ModalBackdrop';
@@ -15,6 +16,18 @@ export default function ConfirmDialog({
   cancelText = "Cancel",
   destructive = false
 }) {
+  const [isConfirming, setIsConfirming] = useState(false);
+
+  const handleConfirm = async () => {
+    setIsConfirming(true);
+    // Close dialog first with animation
+    onClose();
+    // Wait for exit animation to complete before executing confirm action
+    await new Promise(resolve => setTimeout(resolve, 200));
+    onConfirm();
+    setIsConfirming(false);
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -25,7 +38,7 @@ export default function ConfirmDialog({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 500, damping: 35 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
             className="absolute inset-0 flex items-center justify-center z-[201] pointer-events-none p-6"
           >
             <div className="w-full max-w-[280px] rounded-2xl overflow-hidden pointer-events-auto shadow-2xl">
@@ -53,21 +66,20 @@ export default function ConfirmDialog({
                 {/* Buttons - iOS style stacked */}
                 <div className="border-t border-white/10">
                   <motion.button
-                    whileTap={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
-                    onClick={() => {
-                      onConfirm();
-                      onClose();
-                    }}
-                    className={`w-full py-3.5 text-[17px] font-semibold border-b border-white/10 transition-colors ${
+                    whileTap={{ scale: 0.98, backgroundColor: 'rgba(255,255,255,0.1)' }}
+                    onClick={handleConfirm}
+                    disabled={isConfirming}
+                    className={`w-full py-3.5 text-[17px] font-semibold border-b border-white/10 transition-colors disabled:opacity-50 ${
                       destructive ? 'text-red-400' : 'text-blue-400'
                     }`}
                   >
                     {confirmText}
                   </motion.button>
                   <motion.button
-                    whileTap={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
+                    whileTap={{ scale: 0.98, backgroundColor: 'rgba(255,255,255,0.1)' }}
                     onClick={onClose}
-                    className="w-full py-3.5 text-[17px] font-medium text-white transition-colors"
+                    disabled={isConfirming}
+                    className="w-full py-3.5 text-[17px] font-medium text-white transition-colors disabled:opacity-50"
                   >
                     {cancelText}
                   </motion.button>
