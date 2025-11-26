@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 // Note: useRef and useEffect are used by SwipeableAlbumArt and QueueDrawer
 import { createPortal } from 'react-dom';
-import { Play, Pause, SkipForward, SkipBack, Heart, X, ThumbsDown, Info, ChevronUp, ListMusic } from 'lucide-react';
+import { Play, Pause, Heart, ThumbsDown, SkipForward, ListMusic, Info, X } from 'lucide-react';
 import { useRecommendationEngine } from '../context/RecommendationEngineContext';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 import { toast } from 'sonner';
@@ -410,7 +410,6 @@ export default function NowPlaying() {
     dislikeSong, 
     undislikeSong, 
     skipSong, 
-    playPreviousSong, 
     playTrackAtIndex, 
     likedTrackIds, 
     dislikedTrackIds,
@@ -555,14 +554,6 @@ export default function NowPlaying() {
         </motion.button>
 
         <motion.button 
-          whileTap={{ scale: 0.9 }} 
-          onClick={playPreviousSong}
-          className="p-3 text-gray-400 hover:text-white transition-colors"
-        >
-          <SkipBack className="w-7 h-7" />
-        </motion.button>
-        
-        <motion.button 
           whileTap={{ scale: 0.9 }}
           onClick={() => {
             if (!currentTrack.previewUrl) {
@@ -571,9 +562,9 @@ export default function NowPlaying() {
             }
             togglePlayPause();
           }}
-          className={`p-4 bg-white text-black rounded-full shadow-lg ${!currentTrack.previewUrl ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`p-3 bg-white text-black rounded-full shadow-lg ${!currentTrack.previewUrl ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          {isPlaying ? <Pause className="w-7 h-7 fill-current" /> : <Play className="w-7 h-7 fill-current ml-0.5" />}
+          {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ml-0.5" />}
         </motion.button>
         
         <motion.button 
@@ -581,7 +572,7 @@ export default function NowPlaying() {
           onClick={handleSkip}
           className="p-3 text-gray-400 hover:text-white transition-colors"
         >
-          <SkipForward className="w-7 h-7" />
+          <SkipForward className="w-6 h-6" />
         </motion.button>
 
         <motion.button 
