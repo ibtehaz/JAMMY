@@ -1,6 +1,7 @@
 import { AlertCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ModalBackdrop from './ui/ModalBackdrop';
 
 export default function SkipFeedbackDialog({ isOpen, onClose, onSubmit }) {
   const [selectedReason, setSelectedReason] = useState(null);
@@ -41,21 +42,7 @@ export default function SkipFeedbackDialog({ isOpen, onClose, onSubmit }) {
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
-            className="absolute inset-0 bg-black/70 z-50 pointer-events-auto will-change-opacity"
-            style={{ 
-              backdropFilter: "blur(8px)", 
-              WebkitBackdropFilter: "blur(8px)",
-              transform: "translateZ(0)",
-              WebkitTransform: "translateZ(0)"
-            }}
-            onClick={onClose}
-            data-modal-backdrop="true"
-          />
+          <ModalBackdrop onClick={onClose} zIndex={50} />
           <motion.div 
             initial={{ opacity: 0, scale: 0.96, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}

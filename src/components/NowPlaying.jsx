@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect, memo } from 'react';
-// Note: useRef and useEffect are used by SwipeableAlbumArt and QueueDrawer
-import { createPortal } from 'react-dom';
 import { Play, Pause, Heart, ThumbsDown, SkipForward, ListMusic, Info, X } from 'lucide-react';
 import { useRecommendationEngine } from '../context/RecommendationEngineContext';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 import { toast } from 'sonner';
+import ModalBackdrop from './ui/ModalBackdrop';
+import DrawerContainer from './ui/DrawerContainer';
 
 function formatTime(seconds) {
   if (!seconds || isNaN(seconds)) return '0:00';
@@ -146,136 +146,67 @@ function QueueDrawer({ isOpen, onClose, playlist, currentIndex, onPlayTrack, lik
     .map((t, i) => ({ ...t, originalIndex: i }))
     .slice(currentIndex + 1, currentIndex + 6);
 
-  const phoneScreen = typeof document !== 'undefined' ? document.getElementById('phone-screen') : null;
-
-  const drawerContent = (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
-            onClick={onClose}
-            className="absolute inset-0 bg-black/70 z-[100] will-change-opacity"
-            style={{ 
-              backdropFilter: "blur(8px)", 
-              WebkitBackdropFilter: "blur(8px)",
-              transform: "translateZ(0)",
-              WebkitTransform: "translateZ(0)"
-            }}
-            data-modal-backdrop="true"
-          />
-          
-          <motion.div
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ 
-              type: "spring", 
-              damping: 28, 
-              stiffness: 280,
-              mass: 0.8
-            }}
-            drag="y"
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={{ top: 0, bottom: 0.5 }}
-            onDragEnd={(_, info) => {
-              if (info.offset.y > 80 || info.velocity.y > 400) {
-                onClose();
-              }
-            }}
-            className="absolute inset-x-0 bottom-0 z-[101] rounded-t-3xl overflow-hidden"
-            style={{ maxHeight: '75%' }}
-          >
-            <div 
-              className="absolute inset-0 bg-gradient-to-b from-[#1a1a1f] via-[#141418] to-[#0a0a0c] border-t border-white/[0.08]"
-              style={{ 
-                backdropFilter: 'blur(40px)',
-                WebkitBackdropFilter: 'blur(40px)',
+  return (
+    <DrawerContainer
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Up Next"
+      titleIcon={<ListMusic className="w-[18px] h-[18px] text-gray-400" />}
+      subtitle={`${upcomingTracks.length} tracks`}
+    >
+      <div className="space-y-0.5">
+        {upcomingTracks.length > 0 ? (
+          upcomingTracks.map((track, i) => (
+            <motion.button 
+              key={track.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.04, duration: 0.25 }}
+              onClick={() => {
+                if (typeof onPlayTrack === 'function') {
+                  onPlayTrack(track.originalIndex);
+                  onClose();
+                }
               }}
-            />
-            
-            <div className="relative flex flex-col h-full">
-              <div className="pt-3 pb-3 cursor-grab active:cursor-grabbing">
-                <div className="w-9 h-[5px] bg-white/30 rounded-full mx-auto" />
+              className="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-white/[0.04] active:bg-white/[0.08] w-full text-left transition-colors duration-150"
+            >
+              <span className="text-gray-500 w-5 text-center text-sm font-medium tabular-nums">{i + 1}</span>
+              <div className="w-11 h-11 rounded-xl bg-gray-800/80 overflow-hidden shrink-0 shadow-md">
+                {track.artworkUrl100 ? (
+                  <img src={track.artworkUrl100} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-800">
+                    <span className="text-lg opacity-30">🎵</span>
+                  </div>
+                )}
               </div>
-              
-              <div className="flex items-center justify-between px-5 pb-3">
-                <h3 className="text-[15px] font-semibold text-white flex items-center gap-2.5">
-                  <ListMusic className="w-[18px] h-[18px] text-gray-400" />
-                  Up Next
-                </h3>
-                <span className="text-xs text-gray-500 font-medium">{upcomingTracks.length} tracks</span>
-              </div>
-              
-              <div className="flex-1 overflow-y-auto scrollbar-hide px-3">
-                <div className="space-y-0.5">
-                  {upcomingTracks.length > 0 ? (
-                    upcomingTracks.map((track, i) => (
-                      <motion.button 
-                        key={track.id}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.04, duration: 0.25 }}
-                        onClick={() => {
-                          if (typeof onPlayTrack === 'function') {
-                            onPlayTrack(track.originalIndex);
-                            onClose();
-                          }
-                        }}
-                        className="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-white/[0.04] active:bg-white/[0.08] w-full text-left transition-colors duration-150"
-                      >
-                        <span className="text-gray-500 w-5 text-center text-sm font-medium tabular-nums">{i + 1}</span>
-                        <div className="w-11 h-11 rounded-xl bg-gray-800/80 overflow-hidden shrink-0 shadow-md">
-                          {track.artworkUrl100 ? (
-                            <img src={track.artworkUrl100} alt="" className="w-full h-full object-cover" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-800">
-                              <span className="text-lg opacity-30">🎵</span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5">
-                            <p className="font-medium truncate text-[14px] text-white leading-tight">{track.title}</p>
-                            {likedTrackIds?.has(track.id) && (
-                              <Heart className="w-3 h-3 text-green-400 fill-green-400 shrink-0" />
-                            )}
-                            {dislikedTrackIds?.has(track.id) && (
-                              <ThumbsDown className="w-3 h-3 text-red-400 fill-red-400 shrink-0" />
-                            )}
-                          </div>
-                          <p className="text-[12px] text-gray-500 truncate mt-0.5">{track.artist}</p>
-                        </div>
-                        <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          track.confidence >= 0.7 ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
-                        }`}>
-                          {Math.round(track.confidence * 100)}%
-                        </div>
-                      </motion.button>
-                    ))
-                  ) : (
-                    <div className="text-center py-10">
-                      <p className="text-gray-500 text-sm">End of playlist</p>
-                    </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <p className="font-medium truncate text-[14px] text-white leading-tight">{track.title}</p>
+                  {likedTrackIds?.has(track.id) && (
+                    <Heart className="w-3 h-3 text-green-400 fill-green-400 shrink-0" />
+                  )}
+                  {dislikedTrackIds?.has(track.id) && (
+                    <ThumbsDown className="w-3 h-3 text-red-400 fill-red-400 shrink-0" />
                   )}
                 </div>
-                
-                <div className="h-8" />
+                <p className="text-[12px] text-gray-500 truncate mt-0.5">{track.artist}</p>
               </div>
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+              <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                track.confidence >= 0.7 ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
+              }`}>
+                {Math.round(track.confidence * 100)}%
+              </div>
+            </motion.button>
+          ))
+        ) : (
+          <div className="text-center py-10">
+            <p className="text-gray-500 text-sm">End of playlist</p>
+          </div>
+        )}
+      </div>
+    </DrawerContainer>
   );
-
-  if (phoneScreen) {
-    return createPortal(drawerContent, phoneScreen);
-  }
-  return drawerContent;
 }
 
 function ReasoningPanel({ track, isOpen, onClose }) {
@@ -283,21 +214,7 @@ function ReasoningPanel({ track, isOpen, onClose }) {
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
-            onClick={onClose}
-            className="absolute inset-0 bg-black/70 z-40 will-change-opacity"
-            style={{ 
-              backdropFilter: "blur(8px)", 
-              WebkitBackdropFilter: "blur(8px)",
-              transform: "translateZ(0)",
-              WebkitTransform: "translateZ(0)"
-            }}
-            data-modal-backdrop="true"
-          />
+          <ModalBackdrop onClick={onClose} zIndex={40} />
           <motion.div
             initial={{ opacity: 0, scale: 0.96, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -351,25 +268,18 @@ function ReasoningPanel({ track, isOpen, onClose }) {
 function ContextModal({ isOpen, onClose, onSubmit }) {
   const [selectedContext, setSelectedContext] = useState(null);
 
+  // Reset selection when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedContext(null);
+    }
+  }, [isOpen]);
+
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
-            onClick={onClose}
-            className="absolute inset-0 bg-black/70 z-50 will-change-opacity"
-            style={{ 
-              backdropFilter: "blur(8px)", 
-              WebkitBackdropFilter: "blur(8px)",
-              transform: "translateZ(0)",
-              WebkitTransform: "translateZ(0)"
-            }}
-            data-modal-backdrop="true"
-          />
+          <ModalBackdrop onClick={onClose} zIndex={50} />
           <motion.div
             initial={{ opacity: 0, scale: 0.96, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}

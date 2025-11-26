@@ -1,7 +1,50 @@
-import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import tracksData from '../data/tracks.json';
-import { enrichTracksWithPreviews } from '../utils/musicApi';
 import { toast } from 'sonner';
+
+// Custom hook to sync state to refs (consolidates 8 separate useEffects)
+function useSyncedRef(value) {
+  const ref = useRef(value);
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+  return ref;
+}
+
+// Helper to update genre weights (dedupes like/unlike/dislike/undislike logic)
+function updateGenreWeightsForTrack(track, weights, delta, playlistContext, perPlaylistLearning, contextGenreWeights, defaultWeights) {
+  if (perPlaylistLearning && playlistContext) {
+    const contextWeights = contextGenreWeights[playlistContext] 
+      ? { ...contextGenreWeights[playlistContext] }
+      : { ...defaultWeights };
+    
+    track.genres.forEach(g => {
+      if (contextWeights[g] !== undefined) {
+        contextWeights[g] = delta > 0 
+          ? Math.min(contextWeights[g] + delta, 1)
+          : Math.max(contextWeights[g] + delta, 0);
+      }
+    });
+    
+    return {
+      contextGenreWeights: {
+        ...contextGenreWeights,
+        [playlistContext]: contextWeights
+      }
+    };
+  }
+  
+  // Global learning
+  const newWeights = { ...weights };
+  track.genres.forEach(g => {
+    if (newWeights[g] !== undefined) {
+      newWeights[g] = delta > 0 
+        ? Math.min(newWeights[g] + delta, 1)
+        : Math.max(newWeights[g] + delta, 0);
+    }
+  });
+  return { genreWeights: newWeights };
+}
 
 const RecommendationEngineContext = createContext(null);
 
@@ -263,14 +306,16 @@ export function RecommendationEngineProvider({ children }) {
   const audioRef = useRef(null);
   
   const debounceTimerRef = useRef(null);
-  const enrichedTracksRef = useRef([]);
-  const userProfileRef = useRef(userProfile);
-  const feedbackTimelineRef = useRef(feedbackTimeline);
-  const currentPlaylistIdRef = useRef(currentPlaylistId);
-  const currentTrackIndexRef = useRef(currentTrackIndex);
-  const playlistsRef = useRef(playlists);
-  const likedTrackIdsRef = useRef(likedTrackIds);
-  const dislikedTrackIdsRef = useRef(dislikedTrackIds);
+  
+  // Consolidated ref synchronization using custom hook
+  const enrichedTracksRef = useSyncedRef(enrichedTracks);
+  const userProfileRef = useSyncedRef(userProfile);
+  const feedbackTimelineRef = useSyncedRef(feedbackTimeline);
+  const currentPlaylistIdRef = useSyncedRef(currentPlaylistId);
+  const currentTrackIndexRef = useSyncedRef(currentTrackIndex);
+  const playlistsRef = useSyncedRef(playlists);
+  const likedTrackIdsRef = useSyncedRef(likedTrackIds);
+  const dislikedTrackIdsRef = useSyncedRef(dislikedTrackIds);
 
   useEffect(() => {
     localStorage.setItem('musicRecc_userProfile', JSON.stringify(userProfile));
@@ -288,48 +333,19 @@ export function RecommendationEngineProvider({ children }) {
     localStorage.setItem('musicRecc_dislikedTracks', JSON.stringify([...dislikedTrackIds]));
   }, [dislikedTrackIds]);
 
+  // Initialize tracks - no async enrichment needed since tracks.json has all data
   useEffect(() => {
-    async function loadPreviews() {
-      setIsLoadingPreviews(true);
-      const enriched = await enrichTracksWithPreviews(tracksData);
-      enrichedTracksRef.current = enriched;
-      setEnrichedTracks(enriched);
-      setIsLoadingPreviews(false);
-    }
-    loadPreviews();
+    setIsLoadingPreviews(true);
+    // Add hasRealPreview flag inline (removes need for musicApi.js)
+    const enriched = tracksData.map(track => ({
+      ...track,
+      hasRealPreview: !!track.previewUrl
+    }));
+    setEnrichedTracks(enriched);
+    setIsLoadingPreviews(false);
   }, []);
-  
-  useEffect(() => {
-    enrichedTracksRef.current = enrichedTracks;
-  }, [enrichedTracks]);
 
-  useEffect(() => {
-    userProfileRef.current = userProfile;
-  }, [userProfile]);
-
-  useEffect(() => {
-    feedbackTimelineRef.current = feedbackTimeline;
-  }, [feedbackTimeline]);
-
-  useEffect(() => {
-    currentPlaylistIdRef.current = currentPlaylistId;
-  }, [currentPlaylistId]);
-
-  useEffect(() => {
-    currentTrackIndexRef.current = currentTrackIndex;
-  }, [currentTrackIndex]);
-
-  useEffect(() => {
-    playlistsRef.current = playlists;
-  }, [playlists]);
-
-  useEffect(() => {
-    likedTrackIdsRef.current = likedTrackIds;
-  }, [likedTrackIds]);
-
-  useEffect(() => {
-    dislikedTrackIdsRef.current = dislikedTrackIds;
-  }, [dislikedTrackIds]);
+  // Note: Ref synchronization is now handled by useSyncedRef custom hook above
 
   const debouncedRegenerate = useCallback(() => {
     if (debounceTimerRef.current) {
@@ -446,19 +462,39 @@ export function RecommendationEngineProvider({ children }) {
   };
 
   const setActivity = (activity) => {
+    const oldActivity = userProfileRef.current.currentActivity;
     setUserProfile(prev => ({ ...prev, currentActivity: activity }));
     
+    // Log both setting and clearing activity
     if (activity) {
       logFeedback({
         type: "activity_change",
-        details: { activity },
+        details: { activity, from: oldActivity },
         impact: `Prioritizing ${activity.toLowerCase()} tracks`
+      });
+    } else if (oldActivity) {
+      logFeedback({
+        type: "activity_change",
+        details: { activity: null, from: oldActivity },
+        impact: "Cleared activity filter"
       });
     }
   };
 
   const setMoods = (moods) => {
+    const oldMoods = userProfileRef.current.currentMoods;
     setUserProfile(prev => ({ ...prev, currentMoods: moods }));
+    
+    // Log mood changes
+    if (moods.length > 0 || oldMoods.length > 0) {
+      logFeedback({
+        type: "mood_change",
+        details: { moods, from: oldMoods },
+        impact: moods.length > 0 
+          ? `Set mood: ${moods.join(', ')}`
+          : "Cleared mood filters"
+      });
+    }
   };
 
   const toggleMood = (mood) => {
@@ -497,57 +533,25 @@ export function RecommendationEngineProvider({ children }) {
     });
     
     const track = tracksData.find(t => t.id === trackId);
+    const currentPlaylist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
+    const playlistContext = currentPlaylist?.context;
+    
     if (track) {
-      // Get current playlist context for per-playlist learning
-      const currentPlaylist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
-      const playlistContext = currentPlaylist?.context;
-      
       setUserProfile(prev => {
         const newLikeContexts = context 
           ? [context, ...(prev.recentLikeContexts || [])].slice(0, 5)
           : prev.recentLikeContexts;
         
-        // Per-playlist learning: update context-specific weights
-        if (prev.perPlaylistLearning && playlistContext) {
-          const contextWeights = prev.contextGenreWeights[playlistContext] 
-            ? { ...prev.contextGenreWeights[playlistContext] }
-            : { ...defaultGenreWeights };
-          
-          track.genres.forEach(g => {
-            if (contextWeights[g] !== undefined) {
-              contextWeights[g] = Math.min(contextWeights[g] + 0.05, 1);
-            }
-          });
-          
-          return {
-            ...prev,
-            contextGenreWeights: {
-              ...prev.contextGenreWeights,
-              [playlistContext]: contextWeights
-            },
-            recentLikeContexts: newLikeContexts
-          };
-        }
+        // Use helper to update weights (handles both per-playlist and global learning)
+        const weightUpdates = updateGenreWeightsForTrack(
+          track, prev.genreWeights, 0.05, playlistContext,
+          prev.perPlaylistLearning, prev.contextGenreWeights, defaultGenreWeights
+        );
         
-        // Global learning: update global weights
-        const newWeights = { ...prev.genreWeights };
-        track.genres.forEach(g => {
-          if (newWeights[g] !== undefined) {
-            newWeights[g] = Math.min(newWeights[g] + 0.05, 1);
-          }
-        });
-
-        return { 
-          ...prev, 
-          genreWeights: newWeights,
-          recentLikeContexts: newLikeContexts
-        };
+        return { ...prev, ...weightUpdates, recentLikeContexts: newLikeContexts };
       });
     }
 
-    // Get context name for feedback message
-    const currentPlaylist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
-    const playlistContext = currentPlaylist?.context;
     const isPerPlaylist = userProfileRef.current.perPlaylistLearning && playlistContext;
 
     logFeedback({
@@ -568,40 +572,17 @@ export function RecommendationEngineProvider({ children }) {
     });
     
     const track = tracksData.find(t => t.id === trackId);
+    const currentPlaylist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
+    const playlistContext = currentPlaylist?.context;
+    
     if (track) {
-      const currentPlaylist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
-      const playlistContext = currentPlaylist?.context;
-      
       setUserProfile(prev => {
-        // Per-playlist learning: update context-specific weights
-        if (prev.perPlaylistLearning && playlistContext) {
-          const contextWeights = prev.contextGenreWeights[playlistContext] 
-            ? { ...prev.contextGenreWeights[playlistContext] }
-            : { ...defaultGenreWeights };
-          
-          track.genres.forEach(g => {
-            if (contextWeights[g] !== undefined) {
-              contextWeights[g] = Math.max(contextWeights[g] - 0.05, 0);
-            }
-          });
-          
-          return {
-            ...prev,
-            contextGenreWeights: {
-              ...prev.contextGenreWeights,
-              [playlistContext]: contextWeights
-            }
-          };
-        }
-        
-        // Global learning
-        const newWeights = { ...prev.genreWeights };
-        track.genres.forEach(g => {
-          if (newWeights[g] !== undefined) {
-            newWeights[g] = Math.max(newWeights[g] - 0.05, 0);
-          }
-        });
-        return { ...prev, genreWeights: newWeights };
+        // Use helper to update weights (negative delta for unlike)
+        const weightUpdates = updateGenreWeightsForTrack(
+          track, prev.genreWeights, -0.05, playlistContext,
+          prev.perPlaylistLearning, prev.contextGenreWeights, defaultGenreWeights
+        );
+        return { ...prev, ...weightUpdates };
       });
     }
 
@@ -622,9 +603,11 @@ export function RecommendationEngineProvider({ children }) {
       impact: reason ? `Noted: ${reason}` : "Fewer songs like this"
     });
     
-    const currentPlaylist = playlists.find(p => p.id === currentPlaylistId);
-    if (currentPlaylist && currentTrackIndex < currentPlaylist.tracks.length - 1) {
-      setCurrentTrackIndex(prev => prev + 1);
+    // Use refs to avoid stale closures
+    const currentPlaylist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
+    const idx = currentTrackIndexRef.current;
+    if (currentPlaylist && idx < currentPlaylist.tracks.length - 1) {
+      setCurrentTrackIndex(idx + 1);
     }
   };
 
@@ -639,40 +622,17 @@ export function RecommendationEngineProvider({ children }) {
     });
     
     const track = tracksData.find(t => t.id === trackId);
+    const currentPlaylist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
+    const playlistContext = currentPlaylist?.context;
+    
     if (track) {
-      const currentPlaylist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
-      const playlistContext = currentPlaylist?.context;
-      
       setUserProfile(prev => {
-        // Per-playlist learning: update context-specific weights
-        if (prev.perPlaylistLearning && playlistContext) {
-          const contextWeights = prev.contextGenreWeights[playlistContext] 
-            ? { ...prev.contextGenreWeights[playlistContext] }
-            : { ...defaultGenreWeights };
-          
-          track.genres.forEach(g => {
-            if (contextWeights[g] !== undefined) {
-              contextWeights[g] = Math.max(contextWeights[g] - 0.05, 0);
-            }
-          });
-          
-          return {
-            ...prev,
-            contextGenreWeights: {
-              ...prev.contextGenreWeights,
-              [playlistContext]: contextWeights
-            }
-          };
-        }
-        
-        // Global learning
-        const newWeights = { ...prev.genreWeights };
-        track.genres.forEach(g => {
-          if (newWeights[g] !== undefined) {
-            newWeights[g] = Math.max(newWeights[g] - 0.05, 0);
-          }
-        });
-        return { ...prev, genreWeights: newWeights };
+        // Use helper to update weights (negative delta for dislike)
+        const weightUpdates = updateGenreWeightsForTrack(
+          track, prev.genreWeights, -0.05, playlistContext,
+          prev.perPlaylistLearning, prev.contextGenreWeights, defaultGenreWeights
+        );
+        return { ...prev, ...weightUpdates };
       });
     }
 
@@ -682,9 +642,10 @@ export function RecommendationEngineProvider({ children }) {
       impact: "Less songs like this"
     });
 
-    const currentPlaylist = playlists.find(p => p.id === currentPlaylistId);
-    if (currentPlaylist && currentTrackIndex < currentPlaylist.tracks.length - 1) {
-      setCurrentTrackIndex(prev => prev + 1);
+    // Use refs to avoid stale closures
+    const idx = currentTrackIndexRef.current;
+    if (currentPlaylist && idx < currentPlaylist.tracks.length - 1) {
+      setCurrentTrackIndex(idx + 1);
     }
   };
 
@@ -696,40 +657,17 @@ export function RecommendationEngineProvider({ children }) {
     });
     
     const track = tracksData.find(t => t.id === trackId);
+    const currentPlaylist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
+    const playlistContext = currentPlaylist?.context;
+    
     if (track) {
-      const currentPlaylist = playlistsRef.current.find(p => p.id === currentPlaylistIdRef.current);
-      const playlistContext = currentPlaylist?.context;
-      
       setUserProfile(prev => {
-        // Per-playlist learning: update context-specific weights
-        if (prev.perPlaylistLearning && playlistContext) {
-          const contextWeights = prev.contextGenreWeights[playlistContext] 
-            ? { ...prev.contextGenreWeights[playlistContext] }
-            : { ...defaultGenreWeights };
-          
-          track.genres.forEach(g => {
-            if (contextWeights[g] !== undefined) {
-              contextWeights[g] = Math.min(contextWeights[g] + 0.05, 1);
-            }
-          });
-          
-          return {
-            ...prev,
-            contextGenreWeights: {
-              ...prev.contextGenreWeights,
-              [playlistContext]: contextWeights
-            }
-          };
-        }
-        
-        // Global learning
-        const newWeights = { ...prev.genreWeights };
-        track.genres.forEach(g => {
-          if (newWeights[g] !== undefined) {
-            newWeights[g] = Math.min(newWeights[g] + 0.05, 1);
-          }
-        });
-        return { ...prev, genreWeights: newWeights };
+        // Use helper to update weights (positive delta for undislike/restore)
+        const weightUpdates = updateGenreWeightsForTrack(
+          track, prev.genreWeights, 0.05, playlistContext,
+          prev.perPlaylistLearning, prev.contextGenreWeights, defaultGenreWeights
+        );
+        return { ...prev, ...weightUpdates };
       });
     }
 
@@ -805,8 +743,15 @@ export function RecommendationEngineProvider({ children }) {
     setCurrentTrackIndex(prev => index >= 0 ? index : prev);
   }, []);
 
-  const currentPlaylist = playlists.find(p => p.id === currentPlaylistId);
-  const currentTrack = currentPlaylist?.tracks[currentTrackIndex];
+  // Memoize expensive computations to prevent unnecessary re-renders
+  const currentPlaylist = useMemo(
+    () => playlists.find(p => p.id === currentPlaylistId),
+    [playlists, currentPlaylistId]
+  );
+  const currentTrack = useMemo(
+    () => currentPlaylist?.tracks[currentTrackIndex],
+    [currentPlaylist, currentTrackIndex]
+  );
 
   useEffect(() => {
     const audio = audioRef.current;

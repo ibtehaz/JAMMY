@@ -2,6 +2,7 @@ import { X, Book, Dumbbell, Car, PartyPopper, Coffee, Moon, RotateCcw } from 'lu
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import ModalBackdrop from './ui/ModalBackdrop';
 
 export default function ActivitySelectorModal({ 
   isOpen, 
@@ -82,21 +83,7 @@ export default function ActivitySelectorModal({
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
-            onClick={onClose}
-            className="absolute inset-0 bg-black/70 z-50 pointer-events-auto will-change-opacity"
-            style={{ 
-              backdropFilter: "blur(8px)", 
-              WebkitBackdropFilter: "blur(8px)",
-              transform: "translateZ(0)",
-              WebkitTransform: "translateZ(0)"
-            }}
-            data-modal-backdrop="true"
-          />
+          <ModalBackdrop onClick={onClose} zIndex={50} />
           
           <motion.div
             initial={{ opacity: 0, scale: 0.96, y: 10 }}

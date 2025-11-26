@@ -3,6 +3,8 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import FeedbackTimeline from './FeedbackTimeline';
+import ModalBackdrop from './ui/ModalBackdrop';
+import ConfirmDialog from './ui/ConfirmDialog';
 
 function Fader({ value, onChange, label, compact = false }) {
   const trackRef = useRef(null);
@@ -118,6 +120,7 @@ export default function TuningDeckModal({
 }) {
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   
   const [tempGenreWeights, setTempGenreWeights] = useState(userProfile.genreWeights);
   const [tempExplorationLevel, setTempExplorationLevel] = useState(userProfile.explorationLevel);
@@ -160,21 +163,7 @@ export default function TuningDeckModal({
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
-            onClick={onClose}
-            className="absolute inset-0 bg-black/70 z-50 pointer-events-auto will-change-opacity"
-            style={{ 
-              backdropFilter: "blur(8px)", 
-              WebkitBackdropFilter: "blur(8px)",
-              transform: "translateZ(0)",
-              WebkitTransform: "translateZ(0)"
-            }}
-            data-modal-backdrop="true"
-          />
+          <ModalBackdrop onClick={onClose} zIndex={50} />
           
           <motion.div
             initial={{ opacity: 0, scale: 0.96, y: 10 }}
@@ -315,12 +304,7 @@ export default function TuningDeckModal({
               {/* Footer */}
               <div className="px-4 py-3 border-t border-white/5 flex gap-2">
                 <button
-                  onClick={() => {
-                    if (window.confirm("Reset all preferences?")) {
-                      resetAlgorithm();
-                      onClose();
-                    }
-                  }}
+                  onClick={() => setShowResetConfirm(true)}
                   className="flex-1 py-2.5 bg-white/5 text-red-400 text-sm font-semibold rounded-xl hover:bg-white/10 transition-colors flex items-center justify-center gap-1.5"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
@@ -351,6 +335,21 @@ export default function TuningDeckModal({
               />
             </div>
           )}
+
+          {/* Reset Confirmation Dialog */}
+          <ConfirmDialog
+            isOpen={showResetConfirm}
+            onClose={() => setShowResetConfirm(false)}
+            onConfirm={() => {
+              resetAlgorithm();
+              onClose();
+            }}
+            title="Reset Preferences?"
+            message="This will clear all your genre weights, liked songs, and listening history."
+            confirmText="Reset Everything"
+            cancelText="Cancel"
+            destructive
+          />
         </>
       )}
     </AnimatePresence>
