@@ -37,7 +37,11 @@ function MiniPlayer() {
       >
         <div className="bg-[#1a1a1f]/95 backdrop-blur-xl rounded-2xl p-2.5 flex items-center gap-3 border border-white/10 shadow-2xl">
           {/* Album Art */}
-          <div className="w-11 h-11 rounded-xl overflow-hidden shrink-0 bg-gray-800 shadow-lg">
+          <motion.div 
+            layoutId="album-art"
+            className="w-11 h-11 rounded-xl overflow-hidden shrink-0 bg-gray-800 shadow-lg"
+            transition={{ type: "spring", stiffness: 350, damping: 30 }}
+          >
             {artworkUrl ? (
               <img 
                 src={artworkUrl} 
@@ -49,7 +53,7 @@ function MiniPlayer() {
                 <span className="text-lg opacity-40">🎵</span>
               </div>
             )}
-          </div>
+          </motion.div>
 
           {/* Track Info */}
           <div className="flex-1 min-w-0">

@@ -45,14 +45,17 @@ export default function SkipFeedbackDialog({ isOpen, onClose, onSubmit }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 pointer-events-auto"
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="absolute inset-0 bg-black/70 z-50 pointer-events-auto"
+            style={{ backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
             onClick={onClose}
             data-modal-backdrop="true"
           />
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.96, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96, y: 10 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
             className="absolute inset-0 flex items-center justify-center z-[51] p-4 pointer-events-none"
           >
             <div className="glass rounded-2xl w-full shadow-2xl pointer-events-auto">

@@ -6,7 +6,7 @@ import SkipFeedbackDialog from './components/SkipFeedbackDialog';
 import ActivitySelectorModal from './components/ActivitySelectorModal';
 import TuningDeckModal from './components/TuningDeckModal';
 import PhoneFrame from './components/PhoneFrame';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, LayoutGroup } from 'framer-motion';
 
 function ActivityModalManager() {
   const { userProfile, setActivity, setMoods, isActivityModalOpen, setIsActivityModalOpen } = useRecommendationEngine();
@@ -79,12 +79,14 @@ function FeedbackManager() {
 function AnimatedRoutes() {
   const location = useLocation();
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/playlist/:id" element={<PlaylistView />} />
-      </Routes>
-    </AnimatePresence>
+    <LayoutGroup>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/playlist/:id" element={<PlaylistView />} />
+        </Routes>
+      </AnimatePresence>
+    </LayoutGroup>
   );
 }
 

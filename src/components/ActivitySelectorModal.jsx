@@ -1,6 +1,7 @@
 import { X, Book, Dumbbell, Car, PartyPopper, Coffee, Moon, RotateCcw } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 
 export default function ActivitySelectorModal({ 
   isOpen, 
@@ -44,6 +45,23 @@ export default function ActivitySelectorModal({
 
   const handleApply = () => {
     onApply(selectedActivity, selectedMoods);
+    
+    const hasActivity = selectedActivity;
+    const hasMoods = selectedMoods.length > 0;
+    
+    if (hasActivity || hasMoods) {
+      const description = hasActivity && hasMoods
+        ? `${selectedActivity} mode with ${selectedMoods[0]}${selectedMoods.length > 1 ? ` +${selectedMoods.length - 1}` : ''} vibes`
+        : hasActivity
+        ? `${selectedActivity} mode activated`
+        : `${selectedMoods.join(', ')} vibes set`;
+      
+      toast.success("Vibe Set", {
+        description,
+        duration: 2000
+      });
+    }
+    
     onClose();
   };
 
@@ -51,6 +69,12 @@ export default function ActivitySelectorModal({
     setSelectedActivity(null);
     setSelectedMoods([]);
     onApply(null, []);
+    
+    toast("Vibe Cleared", {
+      description: "Back to default recommendations",
+      duration: 2000
+    });
+    
     onClose();
   };
 
@@ -62,22 +86,25 @@ export default function ActivitySelectorModal({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 pointer-events-auto"
+            className="absolute inset-0 bg-black/70 z-50 pointer-events-auto"
+            style={{ backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
             data-modal-backdrop="true"
           />
           
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.96, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96, y: 10 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
             className="absolute inset-0 flex items-center justify-center z-[51] pointer-events-none p-4"
           >
             <div className="glass rounded-2xl w-full shadow-2xl pointer-events-auto">
               {/* Header */}
               <div className="flex items-center justify-between p-4 border-b border-white/5">
                 <div>
-                  <h2 className="text-lg font-semibold text-white">Set Context</h2>
+                  <h2 className="text-lg font-semibold text-white">Set Vibe</h2>
                   <p className="text-xs text-gray-500">Tune your recommendations</p>
                 </div>
                 <button 

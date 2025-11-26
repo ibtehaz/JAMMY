@@ -79,7 +79,11 @@ const SwipeableAlbumArt = memo(function SwipeableAlbumArt({ track, onSwipeLeft, 
         whileTap={{ cursor: 'grabbing' }}
         className="relative aspect-square w-full cursor-grab active:cursor-grabbing"
       >
-        <div className="w-full h-full bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 rounded-2xl shadow-2xl overflow-hidden">
+        <motion.div 
+          layoutId="album-art"
+          className="w-full h-full bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 rounded-2xl shadow-2xl overflow-hidden"
+          transition={{ type: "spring", stiffness: 350, damping: 30 }}
+        >
           {track?.artworkUrl ? (
             <img 
               src={track.artworkUrl} 
@@ -92,7 +96,7 @@ const SwipeableAlbumArt = memo(function SwipeableAlbumArt({ track, onSwipeLeft, 
               <span className="text-7xl opacity-30">🎵</span>
             </div>
           )}
-        </div>
+        </motion.div>
         
         <motion.div 
           style={{ opacity: likeOpacity }}
@@ -152,9 +156,10 @@ function QueueDrawer({ isOpen, onClose, playlist, currentIndex, onPlayTrack, lik
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm z-[100]"
+            className="absolute inset-0 bg-black/70 z-[100]"
+            style={{ backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
             data-modal-backdrop="true"
           />
           
@@ -277,14 +282,17 @@ function ReasoningPanel({ track, isOpen, onClose }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm z-40"
+            className="absolute inset-0 bg-black/70 z-40"
+            style={{ backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
             data-modal-backdrop="true"
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.96, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96, y: 10 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
             className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none p-4"
           >
             <div className="glass rounded-2xl p-5 w-full shadow-2xl pointer-events-auto">
@@ -341,14 +349,17 @@ function ContextModal({ isOpen, onClose, onSubmit }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm z-50"
+            className="absolute inset-0 bg-black/70 z-50"
+            style={{ backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
             data-modal-backdrop="true"
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.96, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96, y: 10 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
             className="absolute inset-0 flex items-center justify-center z-[51] pointer-events-none p-4"
           >
             <div className="glass rounded-2xl p-5 w-full shadow-2xl pointer-events-auto">
@@ -489,8 +500,9 @@ export default function NowPlaying() {
 
   return (
     <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30, delay: 0.05 }}
       className="relative flex flex-col items-center"
     >
       {/* Album Art with Swipe Gestures */}

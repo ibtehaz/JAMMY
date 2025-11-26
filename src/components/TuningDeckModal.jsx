@@ -164,15 +164,18 @@ export default function TuningDeckModal({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 pointer-events-auto"
+            className="absolute inset-0 bg-black/70 z-50 pointer-events-auto"
+            style={{ backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
             data-modal-backdrop="true"
           />
           
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.96, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96, y: 10 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
             className="absolute inset-0 flex items-center justify-center z-[51] pointer-events-none p-3"
           >
             <div 
@@ -215,13 +218,24 @@ export default function TuningDeckModal({
                   </div>
                   
                   <div className="relative h-8">
-                    <div className="absolute top-3 left-0 right-0 h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div className="absolute top-3 left-0 right-0 h-1.5 bg-white/10 rounded-full overflow-hidden">
                       <motion.div 
-                        className="absolute inset-y-0 left-0 bg-gradient-to-r from-white/60 to-white rounded-full"
+                        className="absolute inset-y-0 left-0 bg-gradient-to-r from-white/50 to-white rounded-full"
                         animate={{ width: `${tempExplorationLevel * 100}%` }}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 35 }}
                       />
                     </div>
+                    {/* Visible thumb */}
+                    <motion.div 
+                      className="absolute top-3 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-lg border-2 border-white/80 pointer-events-none"
+                      style={{ 
+                        top: "50%",
+                        left: `calc(${tempExplorationLevel * 100}% - 8px)`,
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.3)"
+                      }}
+                      animate={{ left: `calc(${tempExplorationLevel * 100}% - 8px)` }}
+                      transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                    />
                     <input
                       type="range"
                       min="0"
