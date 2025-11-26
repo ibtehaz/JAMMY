@@ -1,6 +1,6 @@
 const ITUNES_API_BASE = 'https://itunes.apple.com/search';
 const CACHE_KEY = 'musicRecc_enrichedTracks';
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 
 export async function fetchTrackPreview(trackName, artistName) {
   try {
