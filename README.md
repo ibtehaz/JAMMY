@@ -1,16 +1,50 @@
-# React + Vite
+# Jammy
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A music recommender that explains its picks. Built for CS 6750 (Human-Computer Interaction) at Georgia Tech, Fall 2025.
 
-Currently, two official plugins are available:
+**Live demo:** [tryjammy.netlify.app](https://tryjammy.netlify.app) · **Video:** [youtu.be/M7oTdFLv7G8](https://youtu.be/M7oTdFLv7G8)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## What it does
 
-## React Compiler
+- Recommends songs from a 55-track catalog based on your mood, what you're doing, and how much you want to explore.
+- Learns from likes, dislikes, and skips as you listen, and can keep separate preferences per playlist.
+- Shows why each song was picked and how confident it is.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## How a song gets scored
 
-## Expanding the ESLint configuration
+Every track gets a weighted score:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Signal | Weight |
+|---|---|
+| Genre match (learned from your feedback) | 35% |
+| Familiarity vs. the exploration slider | 25% |
+| Activity fit | 20% |
+| Mood | 10% |
+| Energy | 5% |
+| Similar to songs you just liked | 5% |
+
+Likes and dislikes move genre weights by 0.05. Each skip cuts a track's score by 25%, down to a floor of 15%. Liked tracks get a 10% boost. The scoring lives in `src/context/RecommendationEngineContext.jsx`.
+
+## User study
+
+Two rounds, 30 participants each (25 surveys and 5 think-aloud sessions):
+
+- Round 1 compared three prototypes.
+- Round 2 tested this app.
+
+Satisfaction went from 5.4 for the best prototype to 6.0 out of 7 for the final app, and 92% of participants said they were satisfied.
+
+## Stack
+
+React 19, Vite 7, Tailwind CSS 4, Framer Motion. Song previews come from iTunes.
+
+## Team
+
+A 4-person team project. I built the app; the four of us designed and ran the study together.
+
+## Run it locally
+
+```bash
+npm install
+npm run dev
+```
