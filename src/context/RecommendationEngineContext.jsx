@@ -188,7 +188,8 @@ function generateReasoning(track, userProfile, score, weightsToUse = null) {
   }
   
   if (track.similarTo && track.similarTo.length > 0) {
-    reasons.push(`Similar to ${track.similarTo.length} songs you liked`);
+    const similarCount = track.similarTo.length;
+    reasons.push(`Similar to ${similarCount} ${similarCount === 1 ? 'song' : 'songs'} you liked`);
   }
   
   return reasons.slice(0, 3);
